@@ -6,8 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: 'teacher_skill')]
 #[ORM\Entity]
-//#[ORM\Entity(repositoryClass: "App\Infrastructure\Repository\TeacherSkillRepository")]
-class TeacherSkill
+#[ORM\Index(name: 'teacher_skill_teacher_id_ind', columns: ['teacher_id'])]
+#[ORM\Index(name: 'teacher_skill_skill_id_ind', columns: ['skill_id'])]
+class TeacherSkill implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'bigint', unique: true)]
@@ -22,7 +23,7 @@ class TeacherSkill
     #[ORM\JoinColumn(nullable: false)]
     private Skill $skill;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', options: ['default' => 1])]
     private int $level = 1;
 
     public function getId(): int

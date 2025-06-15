@@ -9,8 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: 'teacher')]
 #[ORM\Entity]
-//#[ORM\Entity(repositoryClass: "App\Infrastructure\Repository\TeacherRepository")]
-class Teacher
+class Teacher implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'bigint', unique: true)]
@@ -76,6 +75,23 @@ class Teacher
         return $this->skills;
     }
 
+    public function addSkill(TeacherSkill $skill): void
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills[] = $skill;
+            $skill->setTeacher($this);
+        }
+    }
+
+    public function removeSkill(TeacherSkill $skill): void
+    {
+        if ($this->skills->removeElement($skill)) {
+            if ($skill->getTeacher() === $this) {
+                $skill->setTeacher(null);
+            }
+        }
+    }
+
     public function getGroups(): Collection
     {
         return $this->groups;
@@ -95,5 +111,17 @@ class Teacher
 
     public function setUpdatedAt(): void {
         $this->updatedAt = new DateTime();
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'login' => $this->login,
+            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+            'skills' => array_map(static fn(TeacherSkill $skills) => $skills->getSkill()->getName(), $this->skills->toArray())
+        ];
     }
 }

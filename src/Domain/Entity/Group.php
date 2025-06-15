@@ -2,14 +2,15 @@
 
 namespace App\Domain\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Table(name: 'group')]
+#[ORM\Table(name: '`group`')]
 #[ORM\Entity]
-//#[ORM\Entity(repositoryClass: "App\Infrastructure\Repository\GroupRepository")]
-class Group
+#[ORM\Index(name: 'group_teacher_id_ind', columns: ['teacher_id'])]
+class Group implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'bigint', unique: true)]
@@ -28,6 +29,12 @@ class Group
     #[ORM\ManyToMany(targetEntity: "Skill")]
     #[ORM\JoinTable(name: "group_skills")]
     private Collection $skills;
+
+    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: false)]
+    private DateTime $createdAt;
+
+    #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: false)]
+    private DateTime $updatedAt;
 
     public function __construct()
     {
@@ -73,5 +80,31 @@ class Group
     public function getSkills(): Collection
     {
         return $this->skills;
+    }
+
+    public function getCreatedAt(): DateTime {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(): void {
+        $this->createdAt = new DateTime();
+    }
+
+    public function getUpdatedAt(): DateTime {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(): void {
+        $this->updatedAt = new DateTime();
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s')
+        ];
     }
 }

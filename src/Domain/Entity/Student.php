@@ -9,8 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: 'student')]
 #[ORM\Entity]
-//#[ORM\Entity(repositoryClass: "App\Infrastructure\Repository\StudentRepository")]
-class Student
+#[ORM\Index(name: 'student_group_id_ind', columns: ['group_id'])]
+class Student implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'bigint', unique: true)]
@@ -38,7 +38,6 @@ class Student
     public function __construct()
     {
         $this->skills = new ArrayCollection();
-        $this->groups = new ArrayCollection();
     }
 
     public function getId(): int
@@ -76,6 +75,23 @@ class Student
         return $this->skills;
     }
 
+    public function addSkill(StudentSkill $skill): void
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills[] = $skill;
+            $skill->setStudent($this);
+        }
+    }
+
+    public function removeSkill(StudentSkill $skill): void
+    {
+        if ($this->skills->removeElement($skill)) {
+            if ($skill->getStudent() === $this) {
+                $skill->setStudent(null);
+            }
+        }
+    }
+
     public function getGroup(): ?Group
     {
         return $this->group;
@@ -100,5 +116,17 @@ class Student
 
     public function setUpdatedAt(): void {
         $this->updatedAt = new DateTime();
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'login' => $this->login,
+            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+            'skills' => array_map(static fn(StudentSkill $skills) => $skills->getSkill()->getName(), $this->skills->toArray())
+        ];
     }
 }

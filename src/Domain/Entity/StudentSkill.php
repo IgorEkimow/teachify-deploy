@@ -6,8 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: 'student_skill')]
 #[ORM\Entity]
-//#[ORM\Entity(repositoryClass: "App\Infrastructure\Repository\StudentSkillRepository")]
-class StudentSkill
+#[ORM\Index(name: 'student_skill_student_id_ind', columns: ['student_id'])]
+#[ORM\Index(name: 'student_skill_skill_id_ind', columns: ['skill_id'])]
+class StudentSkill implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'bigint', unique: true)]

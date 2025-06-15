@@ -8,8 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: 'skill')]
 #[ORM\Entity]
-// #[ORM\Entity(repositoryClass: "App\Infrastructure\Repository\SkillRepository")]
-class Skill
+class Skill implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'bigint', unique: true)]
@@ -18,9 +17,6 @@ class Skill
 
     #[ORM\Column(type: 'string', length: 128, nullable: false)]
     private string $name;
-
-    #[ORM\Column(type: 'text', length: 255, nullable: true)]
-    private ?string $description = null;
 
     #[ORM\OneToMany(targetEntity: "StudentSkill", mappedBy: "skill")]
     private Collection $studentSkills;
@@ -54,23 +50,55 @@ class Skill
         $this->name = $name;
     }
 
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(string $description): void
-    {
-        $this->description = $description;
-    }
-
     public function getStudentSkills(): Collection
     {
         return $this->studentSkills;
     }
 
+    public function addStudentSkill(StudentSkill $studentSkill): void
+    {
+        if (!$this->studentSkills->contains($studentSkill)) {
+            $this->studentSkills[] = $studentSkill;
+            $studentSkill->setSkill($this);
+        }
+    }
+
+    public function removeStudentSkill(StudentSkill $studentSkill): void
+    {
+        if ($this->studentSkills->removeElement($studentSkill)) {
+            if ($studentSkill->getSkill() === $this) {
+                $studentSkill->setSkill(null);
+            }
+        }
+    }
+
     public function getTeacherSkills(): Collection
     {
         return $this->teacherSkills;
+    }
+
+    public function addTeacherSkill(TeacherSkill $teacherSkill): void
+    {
+        if (!$this->teacherSkills->contains($teacherSkill)) {
+            $this->teacherSkills[] = $teacherSkill;
+            $teacherSkill->setSkill($this);
+        }
+    }
+
+    public function removeTeacherSkill(TeacherSkill $teacherSkill): void
+    {
+        if ($this->teacherSkills->removeElement($teacherSkill)) {
+            if ($teacherSkill->getSkill() === $this) {
+                $teacherSkill->setSkill(null);
+            }
+        }
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name
+        ];
     }
 }
