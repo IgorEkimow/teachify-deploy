@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Web\CreateStudent\v1;
+namespace App\Controller\Web\CreateTeacher\v1;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +14,7 @@ class Controller
     public function __construct(private readonly Manager $manager) {
     }
 
-    #[Route(path: 'api/v1/student', methods: ['POST'])]
+    #[Route(path: 'api/v1/teacher', methods: ['POST'])]
     public function __invoke(Request $request): Response
     {
         $name = $request->request->get('name');

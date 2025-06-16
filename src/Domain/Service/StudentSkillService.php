@@ -5,7 +5,6 @@ namespace App\Domain\Service;
 use App\Domain\Entity\Skill;
 use App\Domain\Entity\Student;
 use App\Domain\Entity\StudentSkill;
-use App\Infrastructure\Repository\SkillRepository;
 use App\Infrastructure\Repository\StudentSkillRepository;
 
 class StudentSkillService
