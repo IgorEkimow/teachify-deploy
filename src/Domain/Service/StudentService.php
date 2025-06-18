@@ -22,4 +22,24 @@ class StudentService
 
         return $student;
     }
+
+    public function findById(int $id): ?Student
+    {
+        return $this->studentRepository->find($id);
+    }
+
+    public function findAll(): array
+    {
+        return $this->studentRepository->findAll();
+    }
+
+    public function updateLogin(Student $student, string $login): void
+    {
+        $this->studentRepository->updateLogin($student, $login);
+    }
+
+    public function remove(Student $student): void
+    {
+        $this->studentRepository->remove($student);
+    }
 }

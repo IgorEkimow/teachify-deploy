@@ -22,4 +22,24 @@ class TeacherService
 
         return $teacher;
     }
+
+    public function findById(int $id): ?Teacher
+    {
+        return $this->teacherRepository->find($id);
+    }
+
+    public function findAll(): array
+    {
+        return $this->teacherRepository->findAll();
+    }
+
+    public function updateLogin(Teacher $teacher, string $login): void
+    {
+        $this->teacherRepository->updateLogin($teacher, $login);
+    }
+
+    public function remove(Teacher $teacher): void
+    {
+        $this->teacherRepository->remove($teacher);
+    }
 }

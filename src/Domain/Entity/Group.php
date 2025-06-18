@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: '`group`')]
 #[ORM\Entity]
 #[ORM\Index(name: 'group_teacher_id_ind', columns: ['teacher_id'])]
-class Group implements EntityInterface
+class Group implements EntityInterface, SoftDeletableInterface
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'bigint', unique: true)]
@@ -35,6 +35,9 @@ class Group implements EntityInterface
 
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: false)]
     private DateTime $updatedAt;
+
+    #[ORM\Column(name: 'deleted_at', type: 'datetime', nullable: true)]
+    private ?DateTime $deletedAt = null;
 
     public function __construct()
     {
@@ -96,6 +99,16 @@ class Group implements EntityInterface
 
     public function setUpdatedAt(): void {
         $this->updatedAt = new DateTime();
+    }
+
+    public function getDeletedAt(): ?DateTime
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(): void
+    {
+        $this->deletedAt = new DateTime();
     }
 
     public function toArray(): array

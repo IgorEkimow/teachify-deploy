@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Web\CreateTeacher\v1;
+namespace App\Controller\Web\Student\Create\v1;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,14 +14,19 @@ class Controller
     public function __construct(private readonly Manager $manager) {
     }
 
-    #[Route(path: 'api/v1/teacher', methods: ['POST'])]
+    #[Route(path: 'api/v1/student', methods: ['POST'])]
     public function __invoke(Request $request): Response
     {
         $name = $request->request->get('name');
         $login = $request->request->get('login');
         $skills = $request->request->all('skills');
 
-        $user = $this->manager->create($name, $login, $skills);
+        if($skills) {
+            $user = $this->manager->createStudentWithSkill($name, $login, $skills);
+        } else {
+            $user = $this->manager->createStudent($name, $login);
+        }
+
         if ($user === null) {
             return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
         }
