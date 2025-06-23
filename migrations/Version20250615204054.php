@@ -66,28 +66,28 @@ final class Version20250615204054 extends AbstractMigration
             CREATE INDEX teacher_skill_skill_id_ind ON teacher_skill (skill_id)
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE "group" ADD CONSTRAINT FK_6DC044C541807E1D FOREIGN KEY (teacher_id) REFERENCES teacher (id) NOT DEFERRABLE INITIALLY IMMEDIATE
+            ALTER TABLE "group" ADD CONSTRAINT group_teacher_id__fk FOREIGN KEY (teacher_id) REFERENCES teacher (id) NOT DEFERRABLE INITIALLY IMMEDIATE
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE group_skills ADD CONSTRAINT FK_6B7CEA0FE54D947 FOREIGN KEY (group_id) REFERENCES "group" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE
+            ALTER TABLE group_skills ADD CONSTRAINT group_skills_group_id__fk FOREIGN KEY (group_id) REFERENCES "group" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE group_skills ADD CONSTRAINT FK_6B7CEA05585C142 FOREIGN KEY (skill_id) REFERENCES skill (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE
+            ALTER TABLE group_skills ADD CONSTRAINT group_skills_skill_id__fk FOREIGN KEY (skill_id) REFERENCES skill (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE student ADD CONSTRAINT FK_B723AF33FE54D947 FOREIGN KEY (group_id) REFERENCES "group" (id) NOT DEFERRABLE INITIALLY IMMEDIATE
+            ALTER TABLE student ADD CONSTRAINT student_group_id__fk FOREIGN KEY (group_id) REFERENCES "group" (id) NOT DEFERRABLE INITIALLY IMMEDIATE
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE student_skill ADD CONSTRAINT FK_D60A9DEACB944F1A FOREIGN KEY (student_id) REFERENCES student (id) NOT DEFERRABLE INITIALLY IMMEDIATE
+            ALTER TABLE student_skill ADD CONSTRAINT student_skill_student_id__fk FOREIGN KEY (student_id) REFERENCES student (id) NOT DEFERRABLE INITIALLY IMMEDIATE
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE student_skill ADD CONSTRAINT FK_D60A9DEA5585C142 FOREIGN KEY (skill_id) REFERENCES skill (id) NOT DEFERRABLE INITIALLY IMMEDIATE
+            ALTER TABLE student_skill ADD CONSTRAINT student_skill_skill_id__fk FOREIGN KEY (skill_id) REFERENCES skill (id) NOT DEFERRABLE INITIALLY IMMEDIATE
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE teacher_skill ADD CONSTRAINT FK_FC2582A41807E1D FOREIGN KEY (teacher_id) REFERENCES teacher (id) NOT DEFERRABLE INITIALLY IMMEDIATE
+            ALTER TABLE teacher_skill ADD CONSTRAINT teacher_skill_teacher_id__fk FOREIGN KEY (teacher_id) REFERENCES teacher (id) NOT DEFERRABLE INITIALLY IMMEDIATE
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE teacher_skill ADD CONSTRAINT FK_FC2582A5585C142 FOREIGN KEY (skill_id) REFERENCES skill (id) NOT DEFERRABLE INITIALLY IMMEDIATE
+            ALTER TABLE teacher_skill ADD CONSTRAINT teacher_skill_skill_id__fk FOREIGN KEY (skill_id) REFERENCES skill (id) NOT DEFERRABLE INITIALLY IMMEDIATE
         SQL);
     }
 
@@ -95,28 +95,28 @@ final class Version20250615204054 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE "group" DROP CONSTRAINT FK_6DC044C541807E1D
+            ALTER TABLE "group" DROP CONSTRAINT group_teacher_id__fk
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE group_skills DROP CONSTRAINT FK_6B7CEA0FE54D947
+            ALTER TABLE group_skills DROP CONSTRAINT group_skills_group_id__fk
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE group_skills DROP CONSTRAINT FK_6B7CEA05585C142
+            ALTER TABLE group_skills DROP CONSTRAINT group_skills_skill_id__fk
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE student DROP CONSTRAINT FK_B723AF33FE54D947
+            ALTER TABLE student DROP CONSTRAINT student_group_id__fk
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE student_skill DROP CONSTRAINT FK_D60A9DEACB944F1A
+            ALTER TABLE student_skill DROP CONSTRAINT student_skill_student_id__fk
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE student_skill DROP CONSTRAINT FK_D60A9DEA5585C142
+            ALTER TABLE student_skill DROP CONSTRAINT student_skill_skill_id__fk
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE teacher_skill DROP CONSTRAINT FK_FC2582A41807E1D
+            ALTER TABLE teacher_skill DROP CONSTRAINT teacher_skill_teacher_id__fk
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE teacher_skill DROP CONSTRAINT FK_FC2582A5585C142
+            ALTER TABLE teacher_skill DROP CONSTRAINT teacher_skill_skill_id__fk
         SQL);
         $this->addSql(<<<'SQL'
             DROP TABLE "group"

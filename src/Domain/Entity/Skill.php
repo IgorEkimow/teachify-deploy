@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: 'skill')]
 #[ORM\Entity]
+#[ORM\Index(name: 'skill_name_ind', columns: ['name'])]
 class Skill implements EntityInterface
 {
     #[ORM\Id]
