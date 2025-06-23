@@ -11,7 +11,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 class Controller
 {
-    public function __construct(private readonly Manager $manager) {
+    public function __construct(private readonly Manager $manager)
+    {
     }
 
     #[Route(path: 'api/v1/teacher', methods: ['POST'])]
@@ -21,11 +22,7 @@ class Controller
         $login = $request->request->get('login');
         $skills = $request->request->all('skills');
 
-        if($skills) {
-            $user = $this->manager->createTeacherWithSkill($name, $login, $skills);
-        } else {
-            $user = $this->manager->createTeacher($name, $login);
-        }
+        $user = $this->manager->create($name, $login, $skills) ?? null;
 
         if ($user === null) {
             return new JsonResponse(null, Response::HTTP_BAD_REQUEST);

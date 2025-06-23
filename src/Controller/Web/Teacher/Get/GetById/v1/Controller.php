@@ -12,7 +12,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 class Controller
 {
-    public function __construct(private readonly Manager $manager) {
+    public function __construct(private readonly Manager $manager)
+    {
     }
 
     #[Route(path: 'api/v1/teacher', methods: ['GET'])]

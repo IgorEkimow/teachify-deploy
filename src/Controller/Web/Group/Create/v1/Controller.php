@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Controller\Web\Teacher\Get\GetAll\v1;
+namespace App\Controller\Web\Group\Create\v1;
 
-use App\Domain\Entity\Teacher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,9 +15,17 @@ class Controller
     {
     }
 
-    #[Route(path: 'api/v1/teachers', methods: ['GET'])]
+    #[Route(path: 'api/v1/group', methods: ['POST'])]
     public function __invoke(Request $request): Response
     {
-        return new JsonResponse(array_map(static fn (Teacher $teacher): array => $teacher->toArray(), $this->manager->getAllTeachers()));
+        $name = $request->request->get('name');
+
+        $user = $this->manager->create($name) ?? null;
+
+        if ($user === null) {
+            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+        }
+
+        return new JsonResponse($user->toArray());
     }
 }

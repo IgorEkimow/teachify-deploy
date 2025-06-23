@@ -80,9 +80,41 @@ class Group implements EntityInterface, SoftDeletableInterface
         return $this->students;
     }
 
+    public function addStudent(Student $student): void
+    {
+        if (!$this->students->contains($student)) {
+            $this->students[] = $student;
+            $student->setGroup($this);
+        }
+    }
+
+    public function removeStudent(Student $student): void
+    {
+        if ($this->students->contains($student)) {
+            $this->students->removeElement($student);
+            if ($student->getGroup() === $this) {
+                $student->setGroup(null);
+            }
+        }
+    }
+
     public function getSkills(): Collection
     {
         return $this->skills;
+    }
+
+    public function addSkill(Skill $skill): void
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills[] = $skill;
+        }
+    }
+
+    public function removeSkill(Skill $skill): void
+    {
+        if ($this->skills->contains($skill)) {
+            $this->skills->removeElement($skill);
+        }
     }
 
     public function getCreatedAt(): DateTime {

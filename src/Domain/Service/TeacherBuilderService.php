@@ -21,7 +21,7 @@ class TeacherBuilderService
         $teacher = $this->teacherService->create($name, $login);
 
         foreach ($skills as $skillName) {
-            $skill = $this->skillService->findSkillByName($skillName) ?? $this->skillService->create($skillName);
+            $skill = $this->skillService->findByName($skillName) ?? $this->skillService->create($skillName);
             $teacherSkill = $this->teacherSkillService->create($teacher, $skill);
             $teacher->addSkill($teacherSkill);
         }
