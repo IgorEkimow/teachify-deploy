@@ -3,6 +3,7 @@
 namespace App\Domain\Service;
 
 use App\Domain\Entity\Group;
+use App\Domain\Model\CreateGroupModel;
 use App\Infrastructure\Repository\GroupRepository;
 
 class GroupService
@@ -11,10 +12,10 @@ class GroupService
     {
     }
 
-    public function create(string $name): Group
+    public function create(CreateGroupModel $createGroupModel): Group
     {
         $group = new Group();
-        $group->setName($name);
+        $group->setName($createGroupModel->name);
         $group->setCreatedAt();
         $group->setUpdatedAt();
         $this->groupRepository->create($group);
@@ -22,9 +23,9 @@ class GroupService
         return $group;
     }
 
-    public function findByName(string $name): ?Group
+    public function findByName(CreateGroupModel $createGroupModel): ?Group
     {
-        $group = $this->groupRepository->findGroupByName($name);
+        $group = $this->groupRepository->findGroupByName($createGroupModel->name);
         return $group[0] ?? null;
     }
 

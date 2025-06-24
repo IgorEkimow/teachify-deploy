@@ -2,30 +2,21 @@
 
 namespace App\Controller\Web\Group\Create\v1;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Controller\Web\Group\Create\v1\Input\CreateGroupDTO;
+use App\Controller\Web\Group\Create\v1\Output\CreatedGroupDTO;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-class Controller
-{
+class Controller {
     public function __construct(private readonly Manager $manager)
     {
     }
 
     #[Route(path: 'api/v1/group', methods: ['POST'])]
-    public function __invoke(Request $request): Response
+    public function __invoke(#[MapRequestPayload] CreateGroupDTO $createGroupDTO) : CreatedGroupDTO
     {
-        $name = $request->request->get('name');
-
-        $user = $this->manager->create($name) ?? null;
-
-        if ($user === null) {
-            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
-        }
-
-        return new JsonResponse($user->toArray());
+        return $this->manager->create($createGroupDTO);
     }
 }
