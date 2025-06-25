@@ -5,9 +5,9 @@ namespace App\Controller\Web\Student\Delete\v1;
 use App\Domain\Entity\Student;
 use App\Domain\Service\StudentService;
 
-class Manager
+readonly class Manager
 {
-    public function __construct(private readonly StudentService $studentService)
+    public function __construct(private StudentService $studentService)
     {
     }
 

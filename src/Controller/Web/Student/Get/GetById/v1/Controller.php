@@ -2,30 +2,22 @@
 
 namespace App\Controller\Web\Student\Get\GetById\v1;
 
-use App\Domain\Entity\Student;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Controller\Web\Student\Get\GetById\v1\Input\GetStudentDTO;
+use App\Controller\Web\Student\Get\GetById\v1\Output\GotStudentDTO;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-class Controller
+readonly class Controller
 {
-    public function __construct(private readonly Manager $manager)
+    public function __construct(private Manager $manager)
     {
     }
 
     #[Route(path: 'api/v1/student', methods: ['GET'])]
-    public function __invoke(Request $request): Response
+    public function __invoke(#[MapQueryString] GetStudentDTO $getStudentDTO): GotStudentDTO
     {
-        $studentId = $request->query->get('id');
-        $student = $this->manager->getStudentById($studentId);
-
-        if ($student instanceof Student) {
-            return new JsonResponse($student->toArray());
-        }
-
-        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        return $this->manager->getStudentById($getStudentDTO);
     }
 }

@@ -2,17 +2,37 @@
 
 namespace App\Controller\Web\Student\Create\v1;
 
-use App\Domain\Entity\Student;
+use App\Controller\Web\Student\Create\v1\Input\CreateStudentDTO;
+use App\Controller\Web\Student\Create\v1\Output\CreatedStudentDTO;
+use App\Domain\Model\CreateStudentModel;
+use App\Domain\Service\ModelFactory;
+use App\Domain\Service\StudentService;
 use App\Domain\Service\StudentBuilderService;
 
-class Manager
+readonly class Manager
 {
-    public function __construct(private readonly StudentBuilderService $studentBuilderService)
-    {
+    public function __construct(
+        /** @var ModelFactory<CreateStudentModel> */
+        private ModelFactory $modelFactory,
+        private StudentService $studentService,
+        private StudentBuilderService $studentBuilderService
+    ) {
     }
 
-    public function create(string $name, string $login, array $skills): ?Student
+    public function create(CreateStudentDTO $createStudentDTO): CreatedStudentDTO
     {
-        return $this->studentBuilderService->createStudentWithSkill($name, $login, $skills);
+        $createStudentModel = $this->modelFactory->makeModel(CreateStudentModel::class, $createStudentDTO->name, $createStudentDTO->login, $createStudentDTO->skills);
+        $student = $this->studentService->findByLogin($createStudentModel) ?? $this->studentBuilderService->createStudentWithSkill($createStudentModel);
+
+        return new CreatedStudentDTO(
+            $student->getId(),
+            $student->getName(),
+            $student->getLogin(),
+            $student->getCreatedAt()->format('Y-m-d H:i:s'),
+            $student->getUpdatedAt()->format('Y-m-d H:i:s'),
+            $student->getSkills()->map(function($studentSkill) {
+                return $studentSkill->getSkill()->getName();
+            })->toArray()
+        );
     }
 }

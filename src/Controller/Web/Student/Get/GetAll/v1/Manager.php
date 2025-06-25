@@ -4,9 +4,9 @@ namespace App\Controller\Web\Student\Get\GetAll\v1;
 
 use App\Domain\Service\StudentService;
 
-class Manager
+readonly class Manager
 {
-    public function __construct(private readonly StudentService $studentService)
+    public function __construct(private StudentService $studentService)
     {
     }
 

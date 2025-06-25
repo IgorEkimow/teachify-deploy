@@ -19,6 +19,11 @@ class StudentRepository extends AbstractRepository
         return $this->entityManager->getRepository(Student::class)->find($studentId);
     }
 
+    public function findByLogin(string $login): array
+    {
+        return $this->entityManager->getRepository(Student::class)->findBy(['login' => $login]);
+    }
+
     public function findAll(): array
     {
         return $this->entityManager->getRepository(Student::class)->findAll();

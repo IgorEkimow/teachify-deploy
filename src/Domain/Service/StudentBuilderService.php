@@ -3,6 +3,7 @@
 namespace App\Domain\Service;
 
 use App\Domain\Entity\Student;
+use App\Domain\Model\CreateStudentModel;
 
 class StudentBuilderService
 {
@@ -16,11 +17,11 @@ class StudentBuilderService
     /**
      * @param string[] $skills
      */
-    public function createStudentWithSkill(string $name, string $login, array $skills): Student
+    public function createStudentWithSkill(CreateStudentModel $createStudentModel): Student
     {
-        $student = $this->studentService->create($name, $login);
+        $student = $this->studentService->create($createStudentModel->name, $createStudentModel->login);
 
-        foreach ($skills as $skillName) {
+        foreach ($createStudentModel->skills as $skillName) {
             $skill = $this->skillService->findByName($skillName) ?? $this->skillService->create($skillName);
             $studentSkill = $this->studentSkillService->create($student, $skill);
             $student->addSkill($studentSkill);

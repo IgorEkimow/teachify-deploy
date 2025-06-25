@@ -3,6 +3,9 @@
 namespace App\Domain\Service;
 
 use App\Domain\Entity\Student;
+use App\Domain\Model\CreateStudentModel;
+use App\Domain\Model\GetStudentModel;
+use App\Domain\Model\UpdateLoginStudentModel;
 use App\Infrastructure\Repository\StudentRepository;
 
 class StudentService
@@ -23,9 +26,15 @@ class StudentService
         return $student;
     }
 
-    public function findById(int $id): ?Student
+    public function findById(GetStudentModel $getStudentModel): ?Student
     {
-        return $this->studentRepository->find($id);
+        return $this->studentRepository->find($getStudentModel->id);
+    }
+
+    public function findByLogin(CreateStudentModel $createStudentModel): ?Student
+    {
+        $student = $this->studentRepository->findByLogin($createStudentModel->login);
+        return $student[0] ?? null;
     }
 
     public function findAll(): array
@@ -33,9 +42,9 @@ class StudentService
         return $this->studentRepository->findAll();
     }
 
-    public function updateLogin(Student $student, string $login): void
+    public function updateLogin(Student $student, UpdateLoginStudentModel $updateLoginStudentModel): void
     {
-        $this->studentRepository->updateLogin($student, $login);
+        $this->studentRepository->updateLogin($student, $updateLoginStudentModel->login);
     }
 
     public function remove(Student $student): void
