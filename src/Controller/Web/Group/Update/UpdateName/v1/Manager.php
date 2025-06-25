@@ -2,17 +2,24 @@
 
 namespace App\Controller\Web\Group\Update\UpdateName\v1;
 
+use App\Controller\Web\Group\Update\UpdateName\v1\Input\UpdateNameGroupDTO;
 use App\Domain\Entity\Group;
+use App\Domain\Model\UpdateNameGroupModel;
 use App\Domain\Service\GroupService;
+use App\Domain\Service\ModelFactory;
 
-class Manager
+readonly class Manager
 {
-    public function __construct(private readonly GroupService $groupService)
-    {
+    public function __construct(
+        /** @var ModelFactory<UpdateNameGroupModel> */
+        private ModelFactory $modelFactory,
+        private GroupService $groupService
+    ) {
     }
 
-    public function updateName(Group $group, string $name): void
+    public function updateName(Group $group, UpdateNameGroupDTO $updateNameGroupDTO): void
     {
-        $this->groupService->updateName($group, $name);
+        $updateNameGroupModel = $this->modelFactory->makeModel(UpdateNameGroupModel::class, $updateNameGroupDTO->name);
+        $this->groupService->updateName($group, $updateNameGroupModel);
     }
 }

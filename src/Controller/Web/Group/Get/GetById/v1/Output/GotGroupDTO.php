@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controller\Web\Group\Create\v1\Output;
+namespace App\Controller\Web\Group\Get\GetById\v1\Output;
 
 use App\Controller\DTO\OutputDTOInterface;
 
-readonly class CreatedGroupDTO implements OutputDTOInterface
+readonly class GotGroupDTO implements OutputDTOInterface
 {
     public function __construct(
         public int $id,

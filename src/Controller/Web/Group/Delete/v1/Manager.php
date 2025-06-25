@@ -5,9 +5,9 @@ namespace App\Controller\Web\Group\Delete\v1;
 use App\Domain\Entity\Group;
 use App\Domain\Service\GroupService;
 
-class Manager
+readonly class Manager
 {
-    public function __construct(private readonly GroupService $groupService)
+    public function __construct(private GroupService $groupService)
     {
     }
 

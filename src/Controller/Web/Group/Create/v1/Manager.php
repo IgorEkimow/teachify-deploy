@@ -8,11 +8,11 @@ use App\Domain\Model\CreateGroupModel;
 use App\Domain\Service\ModelFactory;
 use App\Domain\Service\GroupService;
 
-class Manager {
+readonly class Manager {
     public function __construct(
         /** @var ModelFactory<CreateGroupModel> */
-        private readonly ModelFactory $modelFactory,
-        private readonly GroupService $groupService
+        private ModelFactory $modelFactory,
+        private GroupService $groupService
     ) {
     }
 

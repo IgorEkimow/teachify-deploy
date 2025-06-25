@@ -4,11 +4,11 @@ namespace App\Domain\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-readonly class CreateGroupModel
+readonly class GetGroupModel
 {
     public function __construct(
         #[Assert\NotBlank]
-        public string $name
+        public int $id
     ) {
     }
 }

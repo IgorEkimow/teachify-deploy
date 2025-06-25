@@ -4,7 +4,7 @@ namespace App\Domain\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-readonly class CreateGroupModel
+readonly class UpdateNameGroupModel
 {
     public function __construct(
         #[Assert\NotBlank]

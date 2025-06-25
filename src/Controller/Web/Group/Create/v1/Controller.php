@@ -9,8 +9,8 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-class Controller {
-    public function __construct(private readonly Manager $manager)
+readonly class Controller {
+    public function __construct(private Manager $manager)
     {
     }
 

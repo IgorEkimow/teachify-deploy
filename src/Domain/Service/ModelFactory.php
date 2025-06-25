@@ -8,9 +8,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @template T
  */
-class ModelFactory
+readonly class ModelFactory
 {
-    public function __construct(private readonly ValidatorInterface $validator)
+    public function __construct(private ValidatorInterface $validator)
     {
     }
 

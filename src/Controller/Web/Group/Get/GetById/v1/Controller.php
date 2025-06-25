@@ -2,30 +2,22 @@
 
 namespace App\Controller\Web\Group\Get\GetById\v1;
 
-use App\Domain\Entity\Group;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Controller\Web\Group\Get\GetById\v1\Input\GetGroupDTO;
+use App\Controller\Web\Group\Get\GetById\v1\Output\GotGroupDTO;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-class Controller
+readonly class Controller
 {
-    public function __construct(private readonly Manager $manager)
+    public function __construct(private Manager $manager)
     {
     }
 
     #[Route(path: 'api/v1/group', methods: ['GET'])]
-    public function __invoke(Request $request): Response
+    public function __invoke(#[MapQueryString] GetGroupDTO $getGroupDTO): GotGroupDTO
     {
-        $groupId = $request->query->get('id');
-        $group = $this->manager->getGroupById($groupId);
-
-        if ($group instanceof Group) {
-            return new JsonResponse($group->toArray());
-        }
-
-        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        return $this->manager->getGroupById($getGroupDTO);
     }
 }

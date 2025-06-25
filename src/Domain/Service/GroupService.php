@@ -4,11 +4,13 @@ namespace App\Domain\Service;
 
 use App\Domain\Entity\Group;
 use App\Domain\Model\CreateGroupModel;
+use App\Domain\Model\GetGroupModel;
+use App\Domain\Model\UpdateNameGroupModel;
 use App\Infrastructure\Repository\GroupRepository;
 
-class GroupService
+readonly class GroupService
 {
-    public function __construct(private readonly GroupRepository $groupRepository)
+    public function __construct(private GroupRepository $groupRepository)
     {
     }
 
@@ -29,9 +31,9 @@ class GroupService
         return $group[0] ?? null;
     }
 
-    public function findById(int $id): ?Group
+    public function findById(GetGroupModel $getGroupModel): ?Group
     {
-        return $this->groupRepository->find($id);
+        return $this->groupRepository->find($getGroupModel->id);
     }
 
     public function findAll(): array
@@ -44,8 +46,8 @@ class GroupService
         $this->groupRepository->remove($group);
     }
 
-    public function updateName(Group $group, string $name): void
+    public function updateName(Group $group, UpdateNameGroupModel $updateNameGroupModel): void
     {
-        $this->groupRepository->updateName($group, $name);
+        $this->groupRepository->updateName($group, $updateNameGroupModel->name);
     }
 }

@@ -2,17 +2,36 @@
 
 namespace App\Controller\Web\Group\Get\GetById\v1;
 
-use App\Domain\Entity\Group;
+use App\Controller\Web\Group\Get\GetById\v1\Input\GetGroupDTO;
+use App\Controller\Web\Group\Get\GetById\v1\Output\GotGroupDTO;
+use App\Domain\Model\GetGroupModel;
+use App\Domain\Service\ModelFactory;
 use App\Domain\Service\GroupService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class Manager
+readonly class Manager
 {
-    public function __construct(private readonly GroupService $groupService)
-    {
+    public function __construct(
+        /** @var ModelFactory<GetGroupModel> */
+        private ModelFactory $modelFactory,
+        private GroupService $groupService
+    ) {
     }
 
-    public function getGroupById(int $groupId): ?Group
+    public function getGroupById(GetGroupDTO $getGroupDTO): GotGroupDTO
     {
-        return $this->groupService->findById($groupId);
+        $getGroupModel = $this->modelFactory->makeModel(GetGroupModel::class, $getGroupDTO->id);
+        $group = $this->groupService->findById($getGroupModel);
+
+        if ($group === null) {
+            throw new NotFoundHttpException('Group not found');
+        }
+
+        return new GotGroupDTO(
+            $group->getId(),
+            $group->getName(),
+            $group->getCreatedAt()->format('Y-m-d H:i:s'),
+            $group->getUpdatedAt()->format('Y-m-d H:i:s')
+        );
     }
 }
