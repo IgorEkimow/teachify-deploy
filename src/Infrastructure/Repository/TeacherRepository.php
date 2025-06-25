@@ -19,6 +19,11 @@ class TeacherRepository extends AbstractRepository
         return $this->entityManager->getRepository(Teacher::class)->find($teacherId);
     }
 
+    public function findByLogin(string $login): array
+    {
+        return $this->entityManager->getRepository(Teacher::class)->findBy(['login' => $login]);
+    }
+
     public function findAll(): array
     {
         return $this->entityManager->getRepository(Teacher::class)->findAll();

@@ -5,14 +5,14 @@ namespace App\Controller\Web\Teacher\Delete\v1;
 use App\Domain\Entity\Teacher;
 use App\Domain\Service\TeacherService;
 
-class Manager
+readonly class Manager
 {
-    public function __construct(private readonly TeacherService $teacherService)
+    public function __construct(private TeacherService $teacherService)
     {
     }
 
-    public function deleteTeacher(Teacher $student): void
+    public function deleteTeacher(Teacher $teacher): void
     {
-        $this->teacherService->remove($student);
+        $this->teacherService->remove($teacher);
     }
 }

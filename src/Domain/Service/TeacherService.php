@@ -3,6 +3,9 @@
 namespace App\Domain\Service;
 
 use App\Domain\Entity\Teacher;
+use App\Domain\Model\CreateTeacherModel;
+use App\Domain\Model\GetTeacherModel;
+use App\Domain\Model\UpdateLoginTeacherModel;
 use App\Infrastructure\Repository\TeacherRepository;
 
 class TeacherService
@@ -23,9 +26,15 @@ class TeacherService
         return $teacher;
     }
 
-    public function findById(int $id): ?Teacher
+    public function findById(GetTeacherModel $getTeacherModel): ?Teacher
     {
-        return $this->teacherRepository->find($id);
+        return $this->teacherRepository->find($getTeacherModel->id);
+    }
+
+    public function findByLogin(CreateTeacherModel $createTeacherModel): ?Teacher
+    {
+        $teacher = $this->teacherRepository->findByLogin($createTeacherModel->login);
+        return $teacher[0] ?? null;
     }
 
     public function findAll(): array
@@ -33,9 +42,9 @@ class TeacherService
         return $this->teacherRepository->findAll();
     }
 
-    public function updateLogin(Teacher $teacher, string $login): void
+    public function updateLogin(Teacher $teacher, UpdateLoginTeacherModel $updateLoginTeacherModel): void
     {
-        $this->teacherRepository->updateLogin($teacher, $login);
+        $this->teacherRepository->updateLogin($teacher, $updateLoginTeacherModel->login);
     }
 
     public function remove(Teacher $teacher): void

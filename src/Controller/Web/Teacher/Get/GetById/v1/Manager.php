@@ -2,17 +2,40 @@
 
 namespace App\Controller\Web\Teacher\Get\GetById\v1;
 
-use App\Domain\Entity\Teacher;
+use App\Controller\Web\Teacher\Get\GetById\v1\Input\GetTeacherDTO;
+use App\Controller\Web\Teacher\Get\GetById\v1\Output\GotTeacherDTO;
+use App\Domain\Model\GetTeacherModel;
+use App\Domain\Service\ModelFactory;
 use App\Domain\Service\TeacherService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class Manager
+readonly class Manager
 {
-    public function __construct(private readonly TeacherService $teacherService)
-    {
+    public function __construct(
+        /** @var ModelFactory<GetTeacherModel> */
+        private ModelFactory $modelFactory,
+        private TeacherService $teacherService
+    ) {
     }
 
-    public function getTeacherById(int $teacherId): ?Teacher
+    public function getTeacherById(GetTeacherDTO $getTeacherDTO): GotTeacherDTO
     {
-        return $this->teacherService->findById($teacherId);
+        $getTeacherModel = $this->modelFactory->makeModel(GetTeacherModel::class, $getTeacherDTO->id);
+        $teacher = $this->teacherService->findById($getTeacherModel);
+
+        if ($teacher === null) {
+            throw new NotFoundHttpException('Teacher not found');
+        }
+
+        return new GotTeacherDTO(
+            $teacher->getId(),
+            $teacher->getName(),
+            $teacher->getLogin(),
+            $teacher->getCreatedAt()->format('Y-m-d H:i:s'),
+            $teacher->getUpdatedAt()->format('Y-m-d H:i:s'),
+            $teacher->getSkills()->map(function($teacherSkill) {
+                return $teacherSkill->getSkill()->getName();
+            })->toArray()
+        );
     }
 }

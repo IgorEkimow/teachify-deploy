@@ -2,32 +2,22 @@
 
 namespace App\Controller\Web\Teacher\Create\v1;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Controller\Web\Teacher\Create\v1\Input\CreateTeacherDTO;
+use App\Controller\Web\Teacher\Create\v1\Output\CreatedTeacherDTO;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-class Controller
+readonly class Controller
 {
-    public function __construct(private readonly Manager $manager)
+    public function __construct(private Manager $manager)
     {
     }
 
     #[Route(path: 'api/v1/teacher', methods: ['POST'])]
-    public function __invoke(Request $request): Response
+    public function __invoke(#[MapRequestPayload] CreateTeacherDTO $createTeacherDTO): CreatedTeacherDTO
     {
-        $name = $request->request->get('name');
-        $login = $request->request->get('login');
-        $skills = $request->request->all('skills');
-
-        $user = $this->manager->create($name, $login, $skills) ?? null;
-
-        if ($user === null) {
-            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
-        }
-
-        return new JsonResponse($user->toArray());
+        return $this->manager->create($createTeacherDTO);
     }
 }
