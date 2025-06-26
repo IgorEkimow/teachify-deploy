@@ -2,15 +2,18 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\ValueObject\RoleEnum;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Table(name: 'teacher')]
 #[ORM\Entity]
 #[ORM\UniqueConstraint(name: 'teacher__login__uniq', columns: ['login'], options: ['where' => '(deleted_at IS NULL)'])]
-class Teacher implements EntityInterface, SoftDeletableInterface
+class Teacher implements EntityInterface, SoftDeletableInterface, UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'bigint', unique: true)]
@@ -22,6 +25,9 @@ class Teacher implements EntityInterface, SoftDeletableInterface
 
     #[ORM\Column(type: 'string', length: 64, nullable: false)]
     private string $login;
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    private string $password;
 
     #[ORM\OneToMany(targetEntity: "TeacherSkill", mappedBy: "teacher")]
     private Collection $skills;
@@ -37,6 +43,9 @@ class Teacher implements EntityInterface, SoftDeletableInterface
 
     #[ORM\Column(name: 'deleted_at', type: 'datetime', nullable: true)]
     private ?DateTime $deletedAt = null;
+
+    #[ORM\Column(type: 'json', length: 1024, nullable: false)]
+    private array $roles = [];
 
     public function __construct()
     {
@@ -72,6 +81,16 @@ class Teacher implements EntityInterface, SoftDeletableInterface
     public function setLogin(string $login): void
     {
         $this->login = $login;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
     }
 
     public function getSkills(): Collection
@@ -125,6 +144,28 @@ class Teacher implements EntityInterface, SoftDeletableInterface
     public function setDeletedAt(): void
     {
         $this->deletedAt = new DateTime();
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = RoleEnum::ROLE_USER->value;
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): void
+    {
+        $this->roles = $roles;
+    }
+
+    public function eraseCredentials(): void
+    {
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->login;
     }
 
     public function toArray(): array

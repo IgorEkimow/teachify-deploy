@@ -7,18 +7,23 @@ use App\Domain\Model\CreateTeacherModel;
 use App\Domain\Model\GetTeacherModel;
 use App\Domain\Model\UpdateLoginTeacherModel;
 use App\Infrastructure\Repository\TeacherRepository;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class TeacherService
 {
-    public function __construct(private readonly TeacherRepository $teacherRepository)
-    {
+    public function __construct(
+        private readonly TeacherRepository $teacherRepository,
+        private readonly UserPasswordHasherInterface $userPasswordHasher
+    ) {
     }
 
-    public function create(string $name, string $login): Teacher
+    public function create(CreateTeacherModel $createTeacherModel): Teacher
     {
         $teacher = new Teacher();
-        $teacher->setName($name);
-        $teacher->setLogin($login);
+        $teacher->setName($createTeacherModel->name);
+        $teacher->setLogin($createTeacherModel->login);
+        $teacher->setPassword($this->userPasswordHasher->hashPassword($teacher, $createTeacherModel->password));
+        $teacher->setRoles($createTeacherModel->roles);
         $teacher->setCreatedAt();
         $teacher->setUpdatedAt();
         $this->teacherRepository->create($teacher);

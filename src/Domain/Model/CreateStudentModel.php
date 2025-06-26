@@ -12,7 +12,10 @@ readonly class CreateStudentModel
         #[Assert\NotBlank]
         public string $login,
         #[Assert\NotBlank]
-        public array $skills
+        public string $password,
+        #[Assert\NotBlank]
+        public array $skills,
+        public array $roles = []
     ) {
     }
 }

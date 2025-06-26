@@ -19,7 +19,7 @@ class StudentBuilderService
      */
     public function createStudentWithSkill(CreateStudentModel $createStudentModel): Student
     {
-        $student = $this->studentService->create($createStudentModel->name, $createStudentModel->login);
+        $student = $this->studentService->create($createStudentModel);
 
         foreach ($createStudentModel->skills as $skillName) {
             $skill = $this->skillService->findByName($skillName) ?? $this->skillService->create($skillName);

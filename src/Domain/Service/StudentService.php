@@ -7,18 +7,23 @@ use App\Domain\Model\CreateStudentModel;
 use App\Domain\Model\GetStudentModel;
 use App\Domain\Model\UpdateLoginStudentModel;
 use App\Infrastructure\Repository\StudentRepository;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class StudentService
 {
-    public function __construct(private readonly StudentRepository $studentRepository)
-    {
+    public function __construct(
+        private readonly StudentRepository $studentRepository,
+        private readonly UserPasswordHasherInterface $userPasswordHasher
+    ) {
     }
 
-    public function create(string $name, string $login): Student
+    public function create(CreateStudentModel $createStudentModel): Student
     {
         $student = new Student();
-        $student->setName($name);
-        $student->setLogin($login);
+        $student->setName($createStudentModel->name);
+        $student->setLogin($createStudentModel->login);
+        $student->setPassword($this->userPasswordHasher->hashPassword($student, $createStudentModel->password));
+        $student->setRoles($createStudentModel->roles);
         $student->setCreatedAt();
         $student->setUpdatedAt();
         $this->studentRepository->create($student);

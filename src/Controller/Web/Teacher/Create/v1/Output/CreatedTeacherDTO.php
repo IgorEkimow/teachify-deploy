@@ -12,7 +12,8 @@ readonly class CreatedTeacherDTO implements OutputDTOInterface
         public string $login,
         public string $createdAt,
         public string $updatedAt,
-        public array $skills
+        public array $skills,
+        public array $roles
     ) {
     }
 }

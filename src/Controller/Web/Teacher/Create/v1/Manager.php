@@ -21,7 +21,14 @@ readonly class Manager
 
     public function create(CreateTeacherDTO $createTeacherDTO) : CreatedTeacherDTO
     {
-        $createTeacherModel = $this->modelFactory->makeModel(CreateTeacherModel::class, $createTeacherDTO->name, $createTeacherDTO->login, $createTeacherDTO->skills);
+        $createTeacherModel = $this->modelFactory->makeModel(
+            CreateTeacherModel::class,
+            $createTeacherDTO->name,
+            $createTeacherDTO->login,
+            $createTeacherDTO->password,
+            $createTeacherDTO->skills,
+            $createTeacherDTO->roles
+        );
         $teacher = $this->teacherService->findByLogin($createTeacherModel) ?? $this->teacherBuilderService->createTeacherWithSkill($createTeacherModel);
 
         return new CreatedTeacherDTO(
@@ -32,7 +39,8 @@ readonly class Manager
             $teacher->getUpdatedAt()->format('Y-m-d H:i:s'),
             $teacher->getSkills()->map(function($teacherSkill) {
                 return $teacherSkill->getSkill()->getName();
-            })->toArray()
+            })->toArray(),
+            $teacher->getRoles()
         );
     }
 }
