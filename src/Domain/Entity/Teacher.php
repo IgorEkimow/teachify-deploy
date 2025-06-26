@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: 'teacher')]
 #[ORM\Entity]
+#[ORM\UniqueConstraint(name: 'teacher__login__uniq', columns: ['login'], options: ['where' => '(deleted_at IS NULL)'])]
 class Teacher implements EntityInterface, SoftDeletableInterface
 {
     #[ORM\Id]
