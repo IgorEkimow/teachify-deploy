@@ -9,7 +9,7 @@ use App\Domain\Model\UpdateLoginStudentModel;
 use App\Infrastructure\Repository\StudentRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class StudentService
+class StudentService implements UserServiceInterface
 {
     public function __construct(
         private readonly StudentRepository $studentRepository,
@@ -42,6 +42,18 @@ class StudentService
         return $student[0] ?? null;
     }
 
+    public function findUserByLogin(string $login): ?Student
+    {
+        $users = $this->studentRepository->findByLogin($login);
+
+        return $users[0] ?? null;
+    }
+
+    public function findUserByToken(string $token): ?Student
+    {
+        return $this->studentRepository->findByToken($token);
+    }
+
     public function findAll(): array
     {
         return $this->studentRepository->findAll();
@@ -50,6 +62,16 @@ class StudentService
     public function updateLogin(Student $student, UpdateLoginStudentModel $updateLoginStudentModel): void
     {
         $this->studentRepository->updateLogin($student, $updateLoginStudentModel->login);
+    }
+
+    public function updateUserToken(string $login): ?string
+    {
+        $user = $this->findUserByLogin($login);
+        if ($user === null) {
+            return null;
+        }
+
+        return $this->studentRepository->updateToken($user);
     }
 
     public function remove(Student $student): void

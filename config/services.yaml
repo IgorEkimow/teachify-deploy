@@ -20,6 +20,13 @@ services:
             - '../src/Domain/Entity/'
             - '../src/Kernel.php'
 
+    App\Domain\Service\UserServiceInterface: '@App\Domain\Service\UserService'
+
+    App\Domain\Service\UserService:
+        arguments:
+            $studentService: '@App\Domain\Service\StudentService'
+            $teacherService: '@App\Domain\Service\TeacherService'
+
     App\Application\EventListener\KernelExceptionEventListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }

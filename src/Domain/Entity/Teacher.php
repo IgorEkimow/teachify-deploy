@@ -29,6 +29,9 @@ class Teacher implements EntityInterface, SoftDeletableInterface, UserInterface,
     #[ORM\Column(type: 'string', nullable: false)]
     private string $password;
 
+    #[ORM\Column(type: 'string', length: 32, unique: true, nullable: true)]
+    private ?string $token = null;
+
     #[ORM\OneToMany(targetEntity: "TeacherSkill", mappedBy: "teacher")]
     private Collection $skills;
 
@@ -91,6 +94,16 @@ class Teacher implements EntityInterface, SoftDeletableInterface, UserInterface,
     public function setPassword(string $password): void
     {
         $this->password = $password;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): void
+    {
+        $this->token = $token;
     }
 
     public function getSkills(): Collection
@@ -176,7 +189,8 @@ class Teacher implements EntityInterface, SoftDeletableInterface, UserInterface,
             'login' => $this->login,
             'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
             'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
-            'skills' => array_map(static fn(TeacherSkill $skills) => $skills->getSkill()->getName(), $this->skills->toArray())
+            'skills' => array_map(static fn(TeacherSkill $skills) => $skills->getSkill()->getName(), $this->skills->toArray()),
+            'roles' => $this->roles
         ];
     }
 }

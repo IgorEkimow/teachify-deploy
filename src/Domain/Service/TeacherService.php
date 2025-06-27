@@ -9,7 +9,7 @@ use App\Domain\Model\UpdateLoginTeacherModel;
 use App\Infrastructure\Repository\TeacherRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class TeacherService
+class TeacherService implements UserServiceInterface
 {
     public function __construct(
         private readonly TeacherRepository $teacherRepository,
@@ -42,6 +42,18 @@ class TeacherService
         return $teacher[0] ?? null;
     }
 
+    public function findUserByLogin(string $login): ?Teacher
+    {
+        $users = $this->teacherRepository->findByLogin($login);
+
+        return $users[0] ?? null;
+    }
+
+    public function findUserByToken(string $token): ?Teacher
+    {
+        return $this->teacherRepository->findByToken($token);
+    }
+
     public function findAll(): array
     {
         return $this->teacherRepository->findAll();
@@ -50,6 +62,16 @@ class TeacherService
     public function updateLogin(Teacher $teacher, UpdateLoginTeacherModel $updateLoginTeacherModel): void
     {
         $this->teacherRepository->updateLogin($teacher, $updateLoginTeacherModel->login);
+    }
+
+    public function updateUserToken(string $login): ?string
+    {
+        $user = $this->findUserByLogin($login);
+        if ($user === null) {
+            return null;
+        }
+
+        return $this->teacherRepository->updateToken($user);
     }
 
     public function remove(Teacher $teacher): void
