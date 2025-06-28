@@ -19,7 +19,10 @@ readonly class Manager
 
     public function updateLogin(Student $student, UpdateLoginStudentDTO $updateLoginStudentDTO): void
     {
-        $updateLoginStudentModel = $this->modelFactory->makeModel(UpdateLoginStudentModel::class, $updateLoginStudentDTO->login);
+        $updateLoginStudentModel = $this->modelFactory->makeModel(
+            UpdateLoginStudentModel::class,
+            trim($updateLoginStudentDTO->login)
+        );
         $this->studentService->updateLogin($student, $updateLoginStudentModel);
     }
 }

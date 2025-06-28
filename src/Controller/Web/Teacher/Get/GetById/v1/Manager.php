@@ -20,7 +20,10 @@ readonly class Manager
 
     public function getTeacherById(GetTeacherDTO $getTeacherDTO): GotTeacherDTO
     {
-        $getTeacherModel = $this->modelFactory->makeModel(GetTeacherModel::class, $getTeacherDTO->id);
+        $getTeacherModel = $this->modelFactory->makeModel(
+            GetTeacherModel::class,
+            trim($getTeacherDTO->id)
+        );
         $teacher = $this->teacherService->findById($getTeacherModel);
 
         if ($teacher === null) {

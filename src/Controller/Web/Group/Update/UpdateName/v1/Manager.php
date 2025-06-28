@@ -19,7 +19,10 @@ readonly class Manager
 
     public function updateName(Group $group, UpdateNameGroupDTO $updateNameGroupDTO): void
     {
-        $updateNameGroupModel = $this->modelFactory->makeModel(UpdateNameGroupModel::class, $updateNameGroupDTO->name);
+        $updateNameGroupModel = $this->modelFactory->makeModel(
+            UpdateNameGroupModel::class,
+            trim($updateNameGroupDTO->name)
+        );
         $this->groupService->updateName($group, $updateNameGroupModel);
     }
 }

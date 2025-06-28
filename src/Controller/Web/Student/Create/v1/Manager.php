@@ -23,9 +23,9 @@ readonly class Manager
     {
         $createStudentModel = $this->modelFactory->makeModel(
             CreateStudentModel::class,
-            $createStudentDTO->name,
-            $createStudentDTO->login,
-            $createStudentDTO->password,
+            trim($createStudentDTO->name),
+            trim($createStudentDTO->login),
+            trim($createStudentDTO->password),
             $createStudentDTO->skills,
             $createStudentDTO->roles
         );

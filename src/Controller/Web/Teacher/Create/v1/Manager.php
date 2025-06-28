@@ -23,9 +23,9 @@ readonly class Manager
     {
         $createTeacherModel = $this->modelFactory->makeModel(
             CreateTeacherModel::class,
-            $createTeacherDTO->name,
-            $createTeacherDTO->login,
-            $createTeacherDTO->password,
+            trim($createTeacherDTO->name),
+            trim($createTeacherDTO->login),
+            trim($createTeacherDTO->password),
             $createTeacherDTO->skills,
             $createTeacherDTO->roles
         );

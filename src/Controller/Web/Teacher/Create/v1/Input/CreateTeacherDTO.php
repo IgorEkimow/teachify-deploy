@@ -15,7 +15,7 @@ readonly class CreateTeacherDTO
         public string $password,
         #[Assert\NotBlank]
         public array $skills,
-        public array $roles
+        public array $roles = ['ROLE_TEACHER']
     ) {
     }
 }

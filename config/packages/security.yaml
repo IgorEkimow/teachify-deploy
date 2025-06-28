@@ -14,8 +14,6 @@ security:
             entity:
                 class: App\Domain\Entity\Teacher
                 property: login
-#        token_provider:
-#            id: App\Security\TokenUserProvider
 
     firewalls:
         dev:
@@ -43,10 +41,18 @@ security:
         ROLE_STUDENT: [ ROLE_USER ] # ROLE_USER - Базовая роль для всех аутентифицированных
 
     access_control:
-        - { path: ^/api/v1/admin, roles: ROLE_ADMIN }
-        - { path: ^/api/v1/student, roles: ROLE_STUDENT }
-        - { path: ^/api/v1/teacher, roles: ROLE_TEACHER }
-        - { path: ^/api/v1/logout, roles: IS_AUTHENTICATED_FULLY }
+        - { path: /api/v1/group, roles: [ ROLE_ADMIN ], methods: [ POST ] }
+        - { path: /api/v1/groups, roles: [ ROLE_ADMIN, ROLE_STUDENT, ROLE_TEACHER ], methods: [ GET ] }
+        - { path: /api/v1/group, roles: [ ROLE_ADMIN, ROLE_STUDENT, ROLE_TEACHER ], methods: [ GET ] }
+        - { path: ^/api/v1/group, roles: [ ROLE_ADMIN ], methods: [ DELETE ] }
+        - { path: /api/v1/student, roles: [ ROLE_ADMIN, ROLE_STUDENT ], methods: [ POST ] }
+        - { path: /api/v1/students, roles: [ ROLE_ADMIN, ROLE_STUDENT ], methods: [ GET ] }
+        - { path: /api/v1/student, roles: [ ROLE_ADMIN, ROLE_STUDENT ], methods: [ GET ] }
+        - { path: ^/api/v1/student, roles: [ ROLE_ADMIN ], methods: [ DELETE ] }
+        - { path: /api/v1/teacher, roles: [ ROLE_ADMIN, ROLE_TEACHER ], methods: [ POST ] }
+        - { path: /api/v1/teachers, roles: [ ROLE_ADMIN, ROLE_TEACHER ], methods: [ GET ] }
+        - { path: /api/v1/teacher, roles: [ ROLE_ADMIN, ROLE_TEACHER ], methods: [ GET ] }
+        - { path: ^/api/v1/teacher, roles: [ ROLE_ADMIN ], methods: [ DELETE ] }
 
 when@test:
     security:
