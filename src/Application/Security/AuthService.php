@@ -12,7 +12,8 @@ class AuthService
     public function __construct(
         private readonly UserServiceInterface $userService,
         private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly JWTEncoderInterface $jwtEncoder
+        private readonly JWTEncoderInterface $jwtEncoder,
+        private readonly int $tokenTTL
     ) {
     }
 
