@@ -20,7 +20,7 @@ class SkillService
         return $skill;
     }
 
-    public function findSkillByName(string $name): ?Skill
+    public function findByName(string $name): ?Skill
     {
         $skills = $this->skillRepository->findSkillByName($name);
         return $skills[0] ?? null;
