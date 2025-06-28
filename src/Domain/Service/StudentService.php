@@ -74,6 +74,14 @@ class StudentService implements UserServiceInterface
         return $this->studentRepository->updateToken($user);
     }
 
+    public function clearUserToken(string $login): void
+    {
+        $user = $this->findUserByLogin($login);
+        if ($user !== null) {
+            $this->studentRepository->clearToken($user);
+        }
+    }
+
     public function remove(Student $student): void
     {
         $this->studentRepository->remove($student);

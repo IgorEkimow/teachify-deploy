@@ -49,6 +49,12 @@ class TeacherRepository extends AbstractRepository
         return $token;
     }
 
+    public function clearToken(Teacher $teacher): void
+    {
+        $teacher->setToken(null);
+        $this->flush();
+    }
+
     public function remove(Teacher $teacher): void
     {
         $teacher->setDeletedAt();

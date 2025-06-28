@@ -49,6 +49,12 @@ class StudentRepository extends AbstractRepository
         return $token;
     }
 
+    public function clearToken(Student $student): void
+    {
+        $student->setToken(null);
+        $this->flush();
+    }
+
     public function remove(Student $student): void
     {
         $student->setDeletedAt();

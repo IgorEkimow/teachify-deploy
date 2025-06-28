@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Web\GetToken\v1;
+namespace App\Controller\Web\Token\GetToken\v1;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

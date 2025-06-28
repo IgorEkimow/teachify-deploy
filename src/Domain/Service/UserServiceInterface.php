@@ -10,4 +10,5 @@ interface UserServiceInterface
     public function findUserByLogin(string $login): Student|Teacher|null;
     public function findUserByToken(string $token): Student|Teacher|null;
     public function updateUserToken(string $login): ?string;
+    public function clearUserToken(string $login): void;
 }

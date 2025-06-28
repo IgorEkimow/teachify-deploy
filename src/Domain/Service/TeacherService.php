@@ -74,6 +74,14 @@ class TeacherService implements UserServiceInterface
         return $this->teacherRepository->updateToken($user);
     }
 
+    public function clearUserToken(string $login): void
+    {
+        $user = $this->findUserByLogin($login);
+        if ($user !== null) {
+            $this->teacherRepository->clearToken($user);
+        }
+    }
+
     public function remove(Teacher $teacher): void
     {
         $this->teacherRepository->remove($teacher);

@@ -3,6 +3,8 @@
 namespace App\Application\Security;
 
 use App\Domain\Service\UserServiceInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTEncodeFailureException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AuthService
@@ -10,6 +12,7 @@ class AuthService
     public function __construct(
         private readonly UserServiceInterface $userService,
         private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly JWTEncoderInterface $jwtEncoder
     ) {
     }
 
@@ -23,8 +26,20 @@ class AuthService
         return $this->passwordHasher->isPasswordValid($user, $password);
     }
 
-    public function getToken(string $login): ?string
+    /**
+     * @throws JWTEncodeFailureException
+     */
+    public function getToken(string $login): string
     {
-        return $this->userService->updateUserToken($login);
+        $user = $this->userService->findUserByLogin($login);
+        $refreshToken = $this->userService->updateUserToken($login);
+        $tokenData = [
+            'username' => $login,
+            'roles' => $user?->getRoles() ?? [],
+            'exp' => time() + 600,
+            'refresh_token' => $refreshToken,
+        ];
+
+        return $this->jwtEncoder->encode($tokenData);
     }
 }

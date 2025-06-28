@@ -36,4 +36,16 @@ class UserService implements UserServiceInterface
 
         return null;
     }
+
+    public function clearUserToken(string $login): void
+    {
+        $user = $this->findUserByLogin($login);
+        if ($user instanceof Student) {
+            $this->studentService->clearUserToken($login);
+        }
+
+        if ($user instanceof Teacher) {
+            $this->teacherService->clearUserToken($login);
+        }
+    }
 }

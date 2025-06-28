@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Web\GetToken\v1;
+namespace App\Controller\Web\Token\GetToken\v1;
 
 use App\Application\Security\AuthService;
 use App\Controller\Exception\AccessDeniedException;

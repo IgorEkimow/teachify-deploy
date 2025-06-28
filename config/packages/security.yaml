@@ -22,6 +22,11 @@ security:
         token:
             pattern: ^/api/v1/get-token
             security: false
+        refreshToken:
+            pattern: ^/api/v1/refresh-token
+            stateless: true
+            provider: app_chain_provider
+            custom_authenticator: App\Application\Security\ApiTokenAuthenticator
         register:
             pattern: ^/api/v1/register
             security: false
@@ -29,7 +34,7 @@ security:
             lazy: true
             stateless: true
             provider: app_chain_provider
-            custom_authenticator: App\Application\Security\ApiTokenAuthenticator
+            custom_authenticator: App\Application\Security\JwtAuthenticator
 
     role_hierarchy:
         ROLE_ADMIN: # Полный доступ ко всем функциям
