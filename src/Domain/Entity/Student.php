@@ -2,6 +2,10 @@
 
 namespace App\Domain\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
 use App\Domain\ValueObject\RoleEnum;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,6 +18,9 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ORM\Entity]
 #[ORM\Index(name: 'student_group_id_ind', columns: ['group_id'])]
 #[ORM\UniqueConstraint(name: 'student__login__uniq', columns: ['login'], options: ['where' => '(deleted_at IS NULL)'])]
+#[ApiResource]
+#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial', 'login' => 'partial'])]
+#[ApiFilter(OrderFilter::class, properties: ['login'])]
 class Student implements EntityInterface, SoftDeletableInterface, UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]

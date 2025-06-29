@@ -2,12 +2,14 @@
 
 namespace App\Domain\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: 'teacher_skill')]
 #[ORM\Entity]
 #[ORM\Index(name: 'teacher_skill_teacher_id_ind', columns: ['teacher_id'])]
 #[ORM\Index(name: 'teacher_skill_skill_id_ind', columns: ['skill_id'])]
+#[ApiResource]
 class TeacherSkill implements EntityInterface
 {
     #[ORM\Id]
