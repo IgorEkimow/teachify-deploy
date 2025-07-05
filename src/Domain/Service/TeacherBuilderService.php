@@ -19,7 +19,7 @@ class TeacherBuilderService
      */
     public function createTeacherWithSkill(CreateTeacherModel $createTeacherModel): Teacher
     {
-        $teacher = $this->teacherService->create($createTeacherModel->name, $createTeacherModel->login);
+        $teacher = $this->teacherService->create($createTeacherModel);
 
         foreach ($createTeacherModel->skills as $skillName) {
             $skill = $this->skillService->findByName($skillName) ?? $this->skillService->create($skillName);

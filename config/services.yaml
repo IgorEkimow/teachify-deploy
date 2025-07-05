@@ -20,6 +20,13 @@ services:
             - '../src/Domain/Entity/'
             - '../src/Kernel.php'
 
+    App\Domain\Service\UserServiceInterface: '@App\Domain\Service\UserService'
+
+    App\Domain\Service\UserService:
+        arguments:
+            $studentService: '@App\Domain\Service\StudentService'
+            $teacherService: '@App\Domain\Service\TeacherService'
+
     App\Application\EventListener\KernelExceptionEventListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
@@ -27,6 +34,10 @@ services:
     App\Application\EventListener\KernelViewEventListener:
         tags:
             - { name: kernel.event_listener, event: kernel.view }
+
+    App\Application\Security\AuthService:
+        arguments:
+            $tokenTTL: '%env(JWT_TTL_SEC)%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

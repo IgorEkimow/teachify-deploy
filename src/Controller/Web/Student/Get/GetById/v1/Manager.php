@@ -20,7 +20,10 @@ readonly class Manager
 
     public function getStudentById(GetStudentDTO $getStudentDTO): GotStudentDTO
     {
-        $getStudentModel = $this->modelFactory->makeModel(GetStudentModel::class, $getStudentDTO->id);
+        $getStudentModel = $this->modelFactory->makeModel(
+            GetStudentModel::class,
+            trim($getStudentDTO->id)
+        );
         $student = $this->studentService->findById($getStudentModel);
 
         if ($student === null) {

@@ -21,7 +21,14 @@ readonly class Manager
 
     public function create(CreateStudentDTO $createStudentDTO): CreatedStudentDTO
     {
-        $createStudentModel = $this->modelFactory->makeModel(CreateStudentModel::class, $createStudentDTO->name, $createStudentDTO->login, $createStudentDTO->skills);
+        $createStudentModel = $this->modelFactory->makeModel(
+            CreateStudentModel::class,
+            trim($createStudentDTO->name),
+            trim($createStudentDTO->login),
+            trim($createStudentDTO->password),
+            $createStudentDTO->skills,
+            $createStudentDTO->roles
+        );
         $student = $this->studentService->findByLogin($createStudentModel) ?? $this->studentBuilderService->createStudentWithSkill($createStudentModel);
 
         return new CreatedStudentDTO(
@@ -32,7 +39,8 @@ readonly class Manager
             $student->getUpdatedAt()->format('Y-m-d H:i:s'),
             $student->getSkills()->map(function($studentSkill) {
                 return $studentSkill->getSkill()->getName();
-            })->toArray()
+            })->toArray(),
+            $student->getRoles()
         );
     }
 }

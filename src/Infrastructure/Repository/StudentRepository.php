@@ -24,6 +24,11 @@ class StudentRepository extends AbstractRepository
         return $this->entityManager->getRepository(Student::class)->findBy(['login' => $login]);
     }
 
+    public function findByToken(string $token): ?Student
+    {
+        return $this->entityManager->getRepository(Student::class)->findOneBy(['token' => $token]);
+    }
+
     public function findAll(): array
     {
         return $this->entityManager->getRepository(Student::class)->findAll();
@@ -32,6 +37,21 @@ class StudentRepository extends AbstractRepository
     public function updateLogin(Student $student, string $login): void
     {
         $student->setLogin($login);
+        $this->flush();
+    }
+
+    public function updateToken(Student $student): string
+    {
+        $token = base64_encode(random_bytes(20));
+        $student->setToken($token);
+        $this->flush();
+
+        return $token;
+    }
+
+    public function clearToken(Student $student): void
+    {
+        $student->setToken(null);
         $this->flush();
     }
 

@@ -24,6 +24,11 @@ class TeacherRepository extends AbstractRepository
         return $this->entityManager->getRepository(Teacher::class)->findBy(['login' => $login]);
     }
 
+    public function findByToken(string $token): ?Teacher
+    {
+        return $this->entityManager->getRepository(Teacher::class)->findOneBy(['token' => $token]);
+    }
+
     public function findAll(): array
     {
         return $this->entityManager->getRepository(Teacher::class)->findAll();
@@ -32,6 +37,21 @@ class TeacherRepository extends AbstractRepository
     public function updateLogin(Teacher $teacher, string $login): void
     {
         $teacher->setLogin($login);
+        $this->flush();
+    }
+
+    public function updateToken(Teacher $teacher): string
+    {
+        $token = base64_encode(random_bytes(20));
+        $teacher->setToken($token);
+        $this->flush();
+
+        return $token;
+    }
+
+    public function clearToken(Teacher $teacher): void
+    {
+        $teacher->setToken(null);
         $this->flush();
     }
 

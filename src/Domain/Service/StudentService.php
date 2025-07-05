@@ -7,18 +7,23 @@ use App\Domain\Model\CreateStudentModel;
 use App\Domain\Model\GetStudentModel;
 use App\Domain\Model\UpdateLoginStudentModel;
 use App\Infrastructure\Repository\StudentRepository;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class StudentService
+class StudentService implements UserServiceInterface
 {
-    public function __construct(private readonly StudentRepository $studentRepository)
-    {
+    public function __construct(
+        private readonly StudentRepository $studentRepository,
+        private readonly UserPasswordHasherInterface $userPasswordHasher
+    ) {
     }
 
-    public function create(string $name, string $login): Student
+    public function create(CreateStudentModel $createStudentModel): Student
     {
         $student = new Student();
-        $student->setName($name);
-        $student->setLogin($login);
+        $student->setName($createStudentModel->name);
+        $student->setLogin($createStudentModel->login);
+        $student->setPassword($this->userPasswordHasher->hashPassword($student, $createStudentModel->password));
+        $student->setRoles($createStudentModel->roles);
         $student->setCreatedAt();
         $student->setUpdatedAt();
         $this->studentRepository->create($student);
@@ -37,6 +42,18 @@ class StudentService
         return $student[0] ?? null;
     }
 
+    public function findUserByLogin(string $login): ?Student
+    {
+        $users = $this->studentRepository->findByLogin($login);
+
+        return $users[0] ?? null;
+    }
+
+    public function findUserByToken(string $token): ?Student
+    {
+        return $this->studentRepository->findByToken($token);
+    }
+
     public function findAll(): array
     {
         return $this->studentRepository->findAll();
@@ -45,6 +62,24 @@ class StudentService
     public function updateLogin(Student $student, UpdateLoginStudentModel $updateLoginStudentModel): void
     {
         $this->studentRepository->updateLogin($student, $updateLoginStudentModel->login);
+    }
+
+    public function updateUserToken(string $login): ?string
+    {
+        $user = $this->findUserByLogin($login);
+        if ($user === null) {
+            return null;
+        }
+
+        return $this->studentRepository->updateToken($user);
+    }
+
+    public function clearUserToken(string $login): void
+    {
+        $user = $this->findUserByLogin($login);
+        if ($user !== null) {
+            $this->studentRepository->clearToken($user);
+        }
     }
 
     public function remove(Student $student): void

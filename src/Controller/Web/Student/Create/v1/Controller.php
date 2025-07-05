@@ -15,7 +15,7 @@ readonly class Controller
     {
     }
 
-    #[Route(path: 'api/v1/student', methods: ['POST'])]
+    #[Route(path: 'api/v1/register/student', methods: ['POST'])]
     public function __invoke(#[MapRequestPayload] CreateStudentDTO $createStudentDTO): CreatedStudentDTO
     {
         return $this->manager->create($createStudentDTO);

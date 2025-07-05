@@ -18,7 +18,10 @@ readonly class Manager {
 
     public function create(CreateGroupDTO $createGroupDTO) : CreatedGroupDTO
     {
-        $createGroupModel = $this->modelFactory->makeModel(CreateGroupModel::class, $createGroupDTO->name);
+        $createGroupModel = $this->modelFactory->makeModel(
+            CreateGroupModel::class,
+            trim($createGroupDTO->name)
+        );
         $group = $this->groupService->findByName($createGroupModel) ?? $this->groupService->create($createGroupModel);
 
         return new CreatedGroupDTO(

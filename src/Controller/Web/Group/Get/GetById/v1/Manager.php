@@ -20,7 +20,10 @@ readonly class Manager
 
     public function getGroupById(GetGroupDTO $getGroupDTO): GotGroupDTO
     {
-        $getGroupModel = $this->modelFactory->makeModel(GetGroupModel::class, $getGroupDTO->id);
+        $getGroupModel = $this->modelFactory->makeModel(
+            GetGroupModel::class,
+            trim($getGroupDTO->id)
+        );
         $group = $this->groupService->findById($getGroupModel);
 
         if ($group === null) {
