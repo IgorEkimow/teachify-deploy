@@ -39,5 +39,20 @@ services:
         arguments:
             $tokenTTL: '%env(JWT_TTL_SEC)%'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    redis_client:
+        class: Redis
+        factory: Symfony\Component\Cache\Adapter\RedisAdapter::createConnection
+        arguments:
+            - '%env(REDIS_DSN)%'
+
+    redis_adapter:
+        class: Symfony\Component\Cache\Adapter\RedisAdapter
+        arguments:
+            - '@redis_client'
+            - 'my_app'
+
+    App\Domain\Repository\StudentRepositoryInterface:
+        class: App\Infrastructure\Repository\StudentRepositoryCacheDecorator
+        arguments:
+            - '@App\Infrastructure\Repository\StudentRepository'
+            - '@cache.app'
