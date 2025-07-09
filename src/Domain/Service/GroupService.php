@@ -10,8 +10,10 @@ use App\Infrastructure\Repository\GroupRepository;
 
 readonly class GroupService
 {
-    public function __construct(private GroupRepository $groupRepository)
-    {
+    public function __construct(
+        private SkillService $skillService,
+        private GroupRepository $groupRepository
+    ) {
     }
 
     public function create(CreateGroupModel $createGroupModel): Group
@@ -20,6 +22,23 @@ readonly class GroupService
         $group->setName($createGroupModel->name);
         $group->setCreatedAt();
         $group->setUpdatedAt();
+        $this->groupRepository->create($group);
+
+        return $group;
+    }
+
+    public function createWithSkills(CreateGroupModel $createGroupModel): Group
+    {
+        $group = new Group();
+        $group->setName($createGroupModel->name);
+        $group->setCreatedAt();
+        $group->setUpdatedAt();
+
+        foreach ($createGroupModel->skills as $skillName) {
+            $skill = $this->skillService->findByName($skillName) ?? $this->skillService->create($skillName);
+            $group->addSkill($skill);
+        }
+
         $this->groupRepository->create($group);
 
         return $group;

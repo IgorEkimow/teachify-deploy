@@ -34,7 +34,10 @@ readonly class Manager
             $group->getId(),
             $group->getName(),
             $group->getCreatedAt()->format('Y-m-d H:i:s'),
-            $group->getUpdatedAt()->format('Y-m-d H:i:s')
+            $group->getUpdatedAt()->format('Y-m-d H:i:s'),
+            $group->getSkills()->map(function($skill) {
+                return $skill->getName();
+            })->toArray()
         );
     }
 }

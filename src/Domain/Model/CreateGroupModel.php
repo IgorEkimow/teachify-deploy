@@ -8,7 +8,9 @@ readonly class CreateGroupModel
 {
     public function __construct(
         #[Assert\NotBlank]
-        public string $name
+        public string $name,
+        #[Assert\NotBlank]
+        public array $skills
     ) {
     }
 }

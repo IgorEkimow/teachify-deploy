@@ -20,15 +20,19 @@ readonly class Manager {
     {
         $createGroupModel = $this->modelFactory->makeModel(
             CreateGroupModel::class,
-            trim($createGroupDTO->name)
+            trim($createGroupDTO->name),
+            $createGroupDTO->skills
         );
-        $group = $this->groupService->findByName($createGroupModel) ?? $this->groupService->create($createGroupModel);
+        $group = $this->groupService->findByName($createGroupModel) ?? $this->groupService->createWithSkills($createGroupModel);
 
         return new CreatedGroupDTO(
             $group->getId(),
             $group->getName(),
             $group->getCreatedAt()->format('Y-m-d H:i:s'),
-            $group->getUpdatedAt()->format('Y-m-d H:i:s')
+            $group->getUpdatedAt()->format('Y-m-d H:i:s'),
+            $group->getSkills()->map(function($skill) {
+                return $skill->getName();
+            })->toArray()
         );
     }
 }

@@ -37,7 +37,7 @@ class AuthService
         $tokenData = [
             'username' => $login,
             'roles' => $user?->getRoles() ?? [],
-            'exp' => time() + 600,
+            'exp' => time() + 3600,
             'refresh_token' => $refreshToken,
         ];
 
