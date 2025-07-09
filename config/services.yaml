@@ -51,8 +51,26 @@ services:
             - '@redis_client'
             - 'my_app'
 
+    App\Domain\Repository\AdminRepositoryInterface:
+        class: App\Infrastructure\Repository\AdminRepositoryCacheDecorator
+        arguments:
+            - '@App\Infrastructure\Repository\AdminRepository'
+            - '@cache.app'
+
+    App\Domain\Repository\GroupRepositoryInterface:
+        class: App\Infrastructure\Repository\GroupRepositoryCacheDecorator
+        arguments:
+            - '@App\Infrastructure\Repository\GroupRepository'
+            - '@cache.app'
+
     App\Domain\Repository\StudentRepositoryInterface:
         class: App\Infrastructure\Repository\StudentRepositoryCacheDecorator
         arguments:
             - '@App\Infrastructure\Repository\StudentRepository'
+            - '@cache.app'
+
+    App\Domain\Repository\TeacherRepositoryInterface:
+        class: App\Infrastructure\Repository\TeacherRepositoryCacheDecorator
+        arguments:
+            - '@App\Infrastructure\Repository\TeacherRepository'
             - '@cache.app'
