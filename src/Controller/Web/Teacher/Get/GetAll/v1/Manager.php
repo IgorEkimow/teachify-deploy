@@ -10,7 +10,7 @@ readonly class Manager
     {
     }
 
-    public function getAllTeachers(): array
+    public function getAll(): array
     {
         return $this->teacherRepositoryInterface->getAllCached();
     }

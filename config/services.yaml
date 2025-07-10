@@ -24,6 +24,7 @@ services:
 
     App\Domain\Service\UserService:
         arguments:
+            $adminService: '@App\Domain\Service\AdminService'
             $studentService: '@App\Domain\Service\StudentService'
             $teacherService: '@App\Domain\Service\TeacherService'
 
@@ -49,28 +50,26 @@ services:
         class: Symfony\Component\Cache\Adapter\RedisAdapter
         arguments:
             - '@redis_client'
-            - 'my_app'
+            - 'teachify'
 
-    App\Domain\Repository\AdminRepositoryInterface:
-        class: App\Infrastructure\Repository\AdminRepositoryCacheDecorator
+    redis_tag_aware_adapter:
+        class: Symfony\Component\Cache\Adapter\RedisTagAwareAdapter
         arguments:
-            - '@App\Infrastructure\Repository\AdminRepository'
-            - '@cache.app'
+            - '@redis_client'
+            - 'teachify'
 
-    App\Domain\Repository\GroupRepositoryInterface:
-        class: App\Infrastructure\Repository\GroupRepositoryCacheDecorator
+    App\Infrastructure\Repository\AdminRepositoryCacheDecorator:
         arguments:
-            - '@App\Infrastructure\Repository\GroupRepository'
-            - '@cache.app'
+            $cache: '@redis_tag_aware_adapter'
 
-    App\Domain\Repository\StudentRepositoryInterface:
-        class: App\Infrastructure\Repository\StudentRepositoryCacheDecorator
+    App\Infrastructure\Repository\GroupRepositoryCacheDecorator:
         arguments:
-            - '@App\Infrastructure\Repository\StudentRepository'
-            - '@cache.app'
+            $cache: '@redis_tag_aware_adapter'
 
-    App\Domain\Repository\TeacherRepositoryInterface:
-        class: App\Infrastructure\Repository\TeacherRepositoryCacheDecorator
+    App\Infrastructure\Repository\StudentRepositoryCacheDecorator:
         arguments:
-            - '@App\Infrastructure\Repository\TeacherRepository'
-            - '@cache.app'
+            $cache: '@redis_tag_aware_adapter'
+
+    App\Infrastructure\Repository\TeacherRepositoryCacheDecorator:
+        arguments:
+            $cache: '@redis_tag_aware_adapter'

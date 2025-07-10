@@ -156,7 +156,8 @@ class Group implements EntityInterface, SoftDeletableInterface
             'id' => $this->id,
             'name' => $this->name,
             'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s')
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+            'skills' => $this->skills->map(fn(Skill $skill) => $skill->getName())->toArray()
         ];
     }
 }

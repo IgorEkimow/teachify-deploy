@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Repository;
 
 use App\Domain\Entity\Group;
-use App\Infrastructure\Repository\GroupRepository;
+use App\Domain\Model\GetAllGroupModel;
 use App\Domain\Repository\GroupRepositoryInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
@@ -20,19 +20,28 @@ class GroupRepositoryCacheDecorator implements GroupRepositoryInterface
     }
 
     /**
-     * @return Group[]
-     * @throws InvalidArgumentException
-     */
+    * @throws InvalidArgumentException
+    */
     public function getAllCached(): array
     {
         $cacheItem = $this->cache->getItem(self::CACHE_KEY_ALL_GROUPS);
 
         if (!$cacheItem->isHit()) {
             $groups = $this->groupRepository->findAll();
-            $cacheItem->set(serialize($groups))->expiresAfter(self::CACHE_TTL);
+            $groupDto = array_map(function(Group $group) {
+                return new GetAllGroupModel(
+                    $group->getId(),
+                    $group->getName(),
+                    $group->getCreatedAt()->format('Y-m-d H:i:s'),
+                    $group->getUpdatedAt()->format('Y-m-d H:i:s'),
+                    $group->getSkills()->map(fn($skill) => $skill->getName())->toArray()
+                );
+            }, $groups);
+
+            $cacheItem->set(serialize($groupDto))->expiresAfter(self::CACHE_TTL);
             $this->cache->save($cacheItem);
 
-            return $groups;
+            return $groupDto;
         }
 
         return unserialize($cacheItem->get());

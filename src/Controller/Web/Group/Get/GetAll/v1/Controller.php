@@ -2,7 +2,6 @@
 
 namespace App\Controller\Web\Group\Get\GetAll\v1;
 
-use App\Domain\Entity\Group;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +18,6 @@ readonly class Controller
     #[Route(path: 'api/v1/groups', methods: ['GET'])]
     public function __invoke(Request $request): Response
     {
-        return new JsonResponse(array_map(static fn (Group $groups): array => $groups->toArray(), $this->manager->getAll()));
+        return new JsonResponse($this->manager->getAll());
     }
 }

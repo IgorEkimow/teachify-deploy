@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Repository;
 
 use App\Domain\Entity\Student;
-use App\Infrastructure\Repository\StudentRepository;
+use App\Domain\Model\GetAllStudentModel;
 use App\Domain\Repository\StudentRepositoryInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
@@ -20,19 +20,30 @@ class StudentRepositoryCacheDecorator implements StudentRepositoryInterface
     }
 
     /**
-     * @return Student[]
-     * @throws InvalidArgumentException
-     */
+    * @throws InvalidArgumentException
+    */
     public function getAllCached(): array
     {
         $cacheItem = $this->cache->getItem(self::CACHE_KEY_ALL_STUDENTS);
 
         if (!$cacheItem->isHit()) {
             $students = $this->studentRepository->findAll();
-            $cacheItem->set(serialize($students))->expiresAfter(self::CACHE_TTL);
+            $studentDto = array_map(function(Student $student) {
+                return new GetAllStudentModel(
+                    $student->getId(),
+                    $student->getName(),
+                    $student->getLogin(),
+                    $student->getCreatedAt()->format('Y-m-d H:i:s'),
+                    $student->getUpdatedAt()->format('Y-m-d H:i:s'),
+                    $student->getSkills()->map(fn($skill) => $skill->getSkill()->getName())->toArray(),
+                    $student->getRoles()
+                );
+            }, $students);
+
+            $cacheItem->set(serialize($studentDto))->expiresAfter(self::CACHE_TTL);
             $this->cache->save($cacheItem);
 
-            return $students;
+            return $studentDto;
         }
 
         return unserialize($cacheItem->get());
