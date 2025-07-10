@@ -58,10 +58,6 @@ services:
             - '@redis_client'
             - 'teachify'
 
-    App\Infrastructure\Repository\AdminRepositoryCacheDecorator:
-        arguments:
-            $cache: '@redis_tag_aware_adapter'
-
     App\Infrastructure\Repository\GroupRepositoryCacheDecorator:
         arguments:
             $cache: '@redis_tag_aware_adapter'
