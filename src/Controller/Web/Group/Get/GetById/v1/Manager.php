@@ -38,6 +38,9 @@ readonly class Manager
             $group->getSkills()->map(function($skill) {
                 return $skill->getName();
             })->toArray(),
+            $group->getStudents()->map(function($student) {
+                return $student->getName();
+            })->toArray(),
             $group->getTeacher() ? $group->getTeacher()->getName() : ''
         );
     }

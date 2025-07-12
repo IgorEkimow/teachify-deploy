@@ -36,6 +36,7 @@ class GroupRepositoryCacheDecorator implements GroupRepositoryInterface
                     $group->getCreatedAt()->format('Y-m-d H:i:s'),
                     $group->getUpdatedAt()->format('Y-m-d H:i:s'),
                     $group->getSkills()->map(fn($skill) => $skill->getName())->toArray(),
+                    $group->getStudents()->map(fn($student) => $student->getName())->toArray(),
                     $group->getTeacher() ? $group->getTeacher()->getName() : ''
                 );
             }, $groups);

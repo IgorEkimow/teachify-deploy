@@ -12,7 +12,8 @@ readonly class GotGroupDTO implements OutputDTOInterface
         public string $createdAt,
         public string $updatedAt,
         public array $skills,
-        public ?string $teacher = ''
+        public array $students,
+        public ?string $teacher = '',
     ) {
     }
 }

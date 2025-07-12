@@ -14,6 +14,7 @@ readonly class GetAllGroupModel
         public string $createdAt,
         public string $updatedAt,
         public array $skills,
+        public array $students,
         public ?string $teacher = ''
     ) {
     }

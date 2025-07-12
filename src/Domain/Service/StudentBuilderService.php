@@ -14,9 +14,6 @@ class StudentBuilderService
     ) {
     }
 
-    /**
-     * @param string[] $skills
-     */
     public function createStudentWithSkill(CreateStudentModel $createStudentModel): Student
     {
         $student = $this->studentService->create($createStudentModel);
@@ -26,6 +23,8 @@ class StudentBuilderService
             $studentSkill = $this->studentSkillService->create($student, $skill);
             $student->addSkill($studentSkill);
         }
+
+        $this->studentService->assignToGroup($student, $createStudentModel->skills);
 
         return $student;
     }
