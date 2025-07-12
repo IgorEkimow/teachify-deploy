@@ -41,6 +41,7 @@ class GroupRepository extends AbstractRepository
         return $this->entityManager->getRepository(Group::class)
             ->createQueryBuilder('g')
             ->where('g.deletedAt IS NULL')
+            ->orderBy('g.id', 'ASC')
             ->getQuery()
             ->getResult();
     }

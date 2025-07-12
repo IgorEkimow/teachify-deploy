@@ -52,6 +52,7 @@ class StudentRepository extends AbstractRepository
         return $this->entityManager->getRepository(Student::class)
             ->createQueryBuilder('s')
             ->where('s.deletedAt IS NULL')
+            ->orderBy('s.id', 'ASC')
             ->getQuery()
             ->getResult();
     }

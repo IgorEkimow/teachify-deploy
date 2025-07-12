@@ -52,6 +52,7 @@ class TeacherRepository extends AbstractRepository
         return $this->entityManager->getRepository(Teacher::class)
             ->createQueryBuilder('t')
             ->where('t.deletedAt IS NULL')
+            ->orderBy('t.id', 'ASC')
             ->getQuery()
             ->getResult();
     }

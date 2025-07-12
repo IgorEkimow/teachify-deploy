@@ -15,7 +15,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Index(name: 'group_teacher_id_ind', columns: ['teacher_id'])]
-#[ORM\UniqueConstraint(name: 'group__name__uniq', columns: ['name'], options: ['where' => '(deleted_at IS NULL)'])]
 #[ApiResource]
 #[ApiFilter(SearchFilter::class, properties: ['name' => 'partial'])]
 #[ApiFilter(OrderFilter::class, properties: ['name'])]

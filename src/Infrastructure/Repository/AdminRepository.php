@@ -52,6 +52,7 @@ class AdminRepository extends AbstractRepository
         return $this->entityManager->getRepository(Admin::class)
             ->createQueryBuilder('a')
             ->where('a.deletedAt IS NULL')
+            ->orderBy('a.id', 'ASC')
             ->getQuery()
             ->getResult();
     }

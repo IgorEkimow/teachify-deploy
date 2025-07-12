@@ -20,6 +20,7 @@ class SkillRepository extends AbstractRepository
             ->select('s')
             ->from(Skill::class, 's')
             ->where('s.name = :name')
+            ->orderBy('s.id', 'ASC')
             ->setParameter('name', $name)
             ->getQuery()
             ->getResult();
