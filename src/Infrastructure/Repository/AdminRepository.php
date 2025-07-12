@@ -14,24 +14,46 @@ class AdminRepository extends AbstractRepository
         return $this->store($admin);
     }
 
-    public function find(int $adminId): ?Admin
+    public function find(int $id): ?Admin
     {
-        return $this->entityManager->getRepository(Admin::class)->find($adminId);
+        return $this->entityManager->getRepository(Admin::class)
+            ->createQueryBuilder('a')
+            ->where('a.id = :id')
+            ->andWhere('a.deletedAt IS NULL')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function findByLogin(string $login): array
     {
-        return $this->entityManager->getRepository(Admin::class)->findBy(['login' => $login]);
+        return $this->entityManager->getRepository(Admin::class)
+            ->createQueryBuilder('a')
+            ->where('a.login = :login')
+            ->andWhere('a.deletedAt IS NULL')
+            ->setParameter('login', $login)
+            ->getQuery()
+            ->getResult();
     }
 
     public function findByToken(string $token): ?Admin
     {
-        return $this->entityManager->getRepository(Admin::class)->findOneBy(['token' => $token]);
+        return $this->entityManager->getRepository(Admin::class)
+            ->createQueryBuilder('a')
+            ->where('a.token = :token')
+            ->andWhere('a.deletedAt IS NULL')
+            ->setParameter('token', $token)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function findAll(): array
     {
-        return $this->entityManager->getRepository(Admin::class)->findAll();
+        return $this->entityManager->getRepository(Admin::class)
+            ->createQueryBuilder('a')
+            ->where('a.deletedAt IS NULL')
+            ->getQuery()
+            ->getResult();
     }
 
     public function updateToken(Admin $admin): string

@@ -8,12 +8,14 @@ use App\Domain\Model\GetStudentModel;
 use App\Domain\Model\UpdateLoginStudentModel;
 use App\Infrastructure\Repository\StudentRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Infrastructure\Repository\StudentRepositoryCacheDecorator;
 
 class StudentService implements UserServiceInterface
 {
     public function __construct(
         private readonly StudentRepository $studentRepository,
-        private readonly UserPasswordHasherInterface $userPasswordHasher
+        private readonly UserPasswordHasherInterface $userPasswordHasher,
+        private readonly StudentRepositoryCacheDecorator $cacheDecorator
     ) {
     }
 
@@ -26,7 +28,9 @@ class StudentService implements UserServiceInterface
         $student->setRoles($createStudentModel->roles);
         $student->setCreatedAt();
         $student->setUpdatedAt();
+
         $this->studentRepository->create($student);
+        $this->cacheDecorator->clearCache();
 
         return $student;
     }
@@ -62,6 +66,7 @@ class StudentService implements UserServiceInterface
     public function updateLogin(Student $student, UpdateLoginStudentModel $updateLoginStudentModel): void
     {
         $this->studentRepository->updateLogin($student, $updateLoginStudentModel->login);
+        $this->cacheDecorator->clearCache();
     }
 
     public function updateUserToken(string $login): ?string
@@ -85,5 +90,6 @@ class StudentService implements UserServiceInterface
     public function remove(Student $student): void
     {
         $this->studentRepository->remove($student);
+        $this->cacheDecorator->clearCache();
     }
 }

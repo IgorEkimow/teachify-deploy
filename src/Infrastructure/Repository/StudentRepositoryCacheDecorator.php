@@ -5,17 +5,18 @@ namespace App\Infrastructure\Repository;
 use App\Domain\Entity\Student;
 use App\Domain\Model\GetAllStudentModel;
 use App\Domain\Repository\StudentRepositoryInterface;
-use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class StudentRepositoryCacheDecorator implements StudentRepositoryInterface
 {
     private const CACHE_KEY_ALL_STUDENTS = 'students_all';
+    private const CACHE_TAG_STUDENTS = 'students';
     private const CACHE_TTL = 3600;
 
     public function __construct(
         private readonly StudentRepository $studentRepository,
-        private readonly CacheItemPoolInterface $cache
+        private readonly TagAwareCacheInterface $cache
     ) {
     }
 
@@ -40,7 +41,8 @@ class StudentRepositoryCacheDecorator implements StudentRepositoryInterface
                 );
             }, $students);
 
-            $cacheItem->set(serialize($studentDto))->expiresAfter(self::CACHE_TTL);
+            $cacheItem->set(serialize($studentDto))->expiresAfter(self::CACHE_TTL)->tag([self::CACHE_TAG_STUDENTS]);
+
             $this->cache->save($cacheItem);
 
             return $studentDto;

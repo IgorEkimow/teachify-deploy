@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Table(name: 'admin')]
 #[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\UniqueConstraint(name: 'admin__login__uniq', columns: ['login'], options: ['where' => '(deleted_at IS NULL)'])]
 class Admin implements EntityInterface, SoftDeletableInterface, UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -96,6 +97,7 @@ class Admin implements EntityInterface, SoftDeletableInterface, UserInterface, P
         return $this->createdAt;
     }
 
+    #[ORM\PrePersist]
     public function setCreatedAt(): void {
         $this->createdAt = new DateTime();
     }
@@ -104,6 +106,8 @@ class Admin implements EntityInterface, SoftDeletableInterface, UserInterface, P
         return $this->updatedAt;
     }
 
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function setUpdatedAt(): void {
         $this->updatedAt = new DateTime();
     }

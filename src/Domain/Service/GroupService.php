@@ -7,12 +7,14 @@ use App\Domain\Model\CreateGroupModel;
 use App\Domain\Model\GetGroupModel;
 use App\Domain\Model\UpdateNameGroupModel;
 use App\Infrastructure\Repository\GroupRepository;
+use App\Infrastructure\Repository\GroupRepositoryCacheDecorator;
 
 readonly class GroupService
 {
     public function __construct(
         private SkillService $skillService,
-        private GroupRepository $groupRepository
+        private GroupRepository $groupRepository,
+        private GroupRepositoryCacheDecorator $cacheDecorator
     ) {
     }
 
@@ -22,7 +24,9 @@ readonly class GroupService
         $group->setName($createGroupModel->name);
         $group->setCreatedAt();
         $group->setUpdatedAt();
+
         $this->groupRepository->create($group);
+        $this->cacheDecorator->clearCache();
 
         return $group;
     }
@@ -40,14 +44,9 @@ readonly class GroupService
         }
 
         $this->groupRepository->create($group);
+        $this->cacheDecorator->clearCache();
 
         return $group;
-    }
-
-    public function findByName(CreateGroupModel $createGroupModel): ?Group
-    {
-        $group = $this->groupRepository->findGroupByName($createGroupModel->name);
-        return $group[0] ?? null;
     }
 
     public function findById(GetGroupModel $getGroupModel): ?Group
@@ -55,18 +54,26 @@ readonly class GroupService
         return $this->groupRepository->find($getGroupModel->id);
     }
 
+    public function findByName(CreateGroupModel $createGroupModel): ?Group
+    {
+        $group = $this->groupRepository->findByName($createGroupModel->name);
+        return $group[0] ?? null;
+    }
+
     public function findAll(): array
     {
         return $this->groupRepository->findAll();
     }
 
-    public function remove(Group $group): void
-    {
-        $this->groupRepository->remove($group);
-    }
-
     public function updateName(Group $group, UpdateNameGroupModel $updateNameGroupModel): void
     {
         $this->groupRepository->updateName($group, $updateNameGroupModel->name);
+        $this->cacheDecorator->clearCache();
+    }
+
+    public function remove(Group $group): void
+    {
+        $this->groupRepository->remove($group);
+        $this->cacheDecorator->clearCache();
     }
 }

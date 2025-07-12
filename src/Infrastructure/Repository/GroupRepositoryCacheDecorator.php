@@ -5,23 +5,24 @@ namespace App\Infrastructure\Repository;
 use App\Domain\Entity\Group;
 use App\Domain\Model\GetAllGroupModel;
 use App\Domain\Repository\GroupRepositoryInterface;
-use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class GroupRepositoryCacheDecorator implements GroupRepositoryInterface
 {
     private const CACHE_KEY_ALL_GROUPS = 'groups_all';
+    private const CACHE_TAG_GROUPS = 'groups';
     private const CACHE_TTL = 3600;
 
     public function __construct(
         private readonly GroupRepository $groupRepository,
-        private readonly CacheItemPoolInterface $cache
+        private readonly TagAwareCacheInterface $cache
     ) {
     }
 
     /**
-    * @throws InvalidArgumentException
-    */
+     * @throws InvalidArgumentException
+     */
     public function getAllCached(): array
     {
         $cacheItem = $this->cache->getItem(self::CACHE_KEY_ALL_GROUPS);
@@ -38,7 +39,8 @@ class GroupRepositoryCacheDecorator implements GroupRepositoryInterface
                 );
             }, $groups);
 
-            $cacheItem->set(serialize($groupDto))->expiresAfter(self::CACHE_TTL);
+            $cacheItem->set(serialize($groupDto))->expiresAfter(self::CACHE_TTL)->tag([self::CACHE_TAG_GROUPS]);
+
             $this->cache->save($cacheItem);
 
             return $groupDto;

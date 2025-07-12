@@ -14,8 +14,14 @@ class SkillRepository extends AbstractRepository
         return $this->store($skill);
     }
 
-    public function findSkillByName(string $name): array
+    public function findByName(string $name): array
     {
-        return $this->entityManager->getRepository(Skill::class)->findBy(['name' => $name]);
+        return $this->entityManager->createQueryBuilder()
+            ->select('s')
+            ->from(Skill::class, 's')
+            ->where('s.name = :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getResult();
     }
 }
