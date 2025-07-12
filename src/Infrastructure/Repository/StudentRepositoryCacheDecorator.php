@@ -37,7 +37,8 @@ class StudentRepositoryCacheDecorator implements StudentRepositoryInterface
                     $student->getCreatedAt()->format('Y-m-d H:i:s'),
                     $student->getUpdatedAt()->format('Y-m-d H:i:s'),
                     $student->getSkills()->map(fn($skill) => $skill->getSkill()->getName())->toArray(),
-                    $student->getRoles()
+                    $student->getRoles(),
+                    $student->getGroup() ? $student->getGroup()->getName() : ''
                 );
             }, $students);
 

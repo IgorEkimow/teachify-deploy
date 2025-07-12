@@ -13,7 +13,8 @@ readonly class GetAllGroupModel
         public string $name,
         public string $createdAt,
         public string $updatedAt,
-        public array $skills
+        public array $skills,
+        public ?string $teacher = ''
     ) {
     }
 }
