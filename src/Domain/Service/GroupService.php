@@ -5,8 +5,10 @@ namespace App\Domain\Service;
 use App\Domain\Entity\Group;
 use App\Domain\Model\CreateGroupModel;
 use App\Domain\Model\GetGroupModel;
+use App\Domain\Model\TeacherMatchingCriteria;
 use App\Domain\Model\UpdateNameGroupModel;
 use App\Infrastructure\Repository\GroupRepository;
+use App\Infrastructure\Repository\TeacherRepository;
 use App\Infrastructure\Repository\GroupRepositoryCacheDecorator;
 
 readonly class GroupService
@@ -14,6 +16,7 @@ readonly class GroupService
     public function __construct(
         private SkillService $skillService,
         private GroupRepository $groupRepository,
+        private TeacherRepository $teacherRepository,
         private GroupRepositoryCacheDecorator $cacheDecorator
     ) {
     }
@@ -44,6 +47,7 @@ readonly class GroupService
         }
 
         $this->groupRepository->create($group);
+        $this->assignTeacher($group);
         $this->cacheDecorator->clearCache();
 
         return $group;
@@ -75,5 +79,19 @@ readonly class GroupService
     {
         $this->groupRepository->remove($group);
         $this->cacheDecorator->clearCache();
+    }
+
+    public function assignTeacher(Group $group): void
+    {
+        $criteria = new TeacherMatchingCriteria(maxGroupsPerTeacher: 5, minSkillCoverage: 0.7);
+
+        $teacherMatcher = new TeacherMatcherService($this->teacherRepository);
+        $bestTeacher = $teacherMatcher->findBestMatchForGroup($group, $criteria);
+
+        if ($bestTeacher !== null) {
+            $group->setTeacher($bestTeacher);
+            $this->groupRepository->update($group);
+            $this->cacheDecorator->clearCache();
+        }
     }
 }

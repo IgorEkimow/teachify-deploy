@@ -41,7 +41,7 @@ readonly class Manager
                 return $studentSkill->getSkill()->getName();
             })->toArray(),
             $student->getRoles(),
-            $student->getGroup()?->getName() ?? null
+            $student->getGroup()?->getName() ?? ''
         );
     }
 }
