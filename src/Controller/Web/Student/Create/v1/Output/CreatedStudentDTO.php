@@ -13,7 +13,8 @@ readonly class CreatedStudentDTO implements OutputDTOInterface
         public string $createdAt,
         public string $updatedAt,
         public array $skills,
-        public array $roles
+        public array $roles,
+        public ?string $group = ''
     ) {
     }
 }

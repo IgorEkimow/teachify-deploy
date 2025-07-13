@@ -22,7 +22,7 @@ class SkillService
 
     public function findByName(string $name): ?Skill
     {
-        $skills = $this->skillRepository->findSkillByName($name);
+        $skills = $this->skillRepository->findByName($name);
         return $skills[0] ?? null;
     }
 }

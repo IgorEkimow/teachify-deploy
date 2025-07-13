@@ -26,7 +26,7 @@ abstract class AbstractRepository
     }
 
     /**
-     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws ORMException
      */
     public function refresh(EntityInterface $entity): void
     {

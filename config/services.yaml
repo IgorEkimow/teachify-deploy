@@ -24,6 +24,7 @@ services:
 
     App\Domain\Service\UserService:
         arguments:
+            $adminService: '@App\Domain\Service\AdminService'
             $studentService: '@App\Domain\Service\StudentService'
             $teacherService: '@App\Domain\Service\TeacherService'
 
@@ -39,5 +40,32 @@ services:
         arguments:
             $tokenTTL: '%env(JWT_TTL_SEC)%'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    redis_client:
+        class: Redis
+        factory: Symfony\Component\Cache\Adapter\RedisAdapter::createConnection
+        arguments:
+            - '%env(REDIS_DSN)%'
+
+    redis_adapter:
+        class: Symfony\Component\Cache\Adapter\RedisAdapter
+        arguments:
+            - '@redis_client'
+            - 'teachify'
+
+    redis_tag_aware_adapter:
+        class: Symfony\Component\Cache\Adapter\RedisTagAwareAdapter
+        arguments:
+            - '@redis_client'
+            - 'teachify'
+
+    App\Infrastructure\Repository\GroupRepositoryCacheDecorator:
+        arguments:
+            $cache: '@redis_tag_aware_adapter'
+
+    App\Infrastructure\Repository\StudentRepositoryCacheDecorator:
+        arguments:
+            $cache: '@redis_tag_aware_adapter'
+
+    App\Infrastructure\Repository\TeacherRepositoryCacheDecorator:
+        arguments:
+            $cache: '@redis_tag_aware_adapter'

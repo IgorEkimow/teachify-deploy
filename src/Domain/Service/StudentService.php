@@ -2,18 +2,24 @@
 
 namespace App\Domain\Service;
 
+use App\Domain\Entity\Group;
 use App\Domain\Entity\Student;
 use App\Domain\Model\CreateStudentModel;
 use App\Domain\Model\GetStudentModel;
+use App\Domain\Model\GroupMatchingCriteria;
 use App\Domain\Model\UpdateLoginStudentModel;
+use App\Infrastructure\Repository\GroupRepository;
 use App\Infrastructure\Repository\StudentRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Infrastructure\Repository\StudentRepositoryCacheDecorator;
 
 class StudentService implements UserServiceInterface
 {
     public function __construct(
         private readonly StudentRepository $studentRepository,
-        private readonly UserPasswordHasherInterface $userPasswordHasher
+        private readonly UserPasswordHasherInterface $userPasswordHasher,
+        private readonly StudentRepositoryCacheDecorator $cacheDecorator,
+        private readonly GroupRepository $groupRepository,
     ) {
     }
 
@@ -26,7 +32,9 @@ class StudentService implements UserServiceInterface
         $student->setRoles($createStudentModel->roles);
         $student->setCreatedAt();
         $student->setUpdatedAt();
+
         $this->studentRepository->create($student);
+        $this->cacheDecorator->clearCache();
 
         return $student;
     }
@@ -62,6 +70,7 @@ class StudentService implements UserServiceInterface
     public function updateLogin(Student $student, UpdateLoginStudentModel $updateLoginStudentModel): void
     {
         $this->studentRepository->updateLogin($student, $updateLoginStudentModel->login);
+        $this->cacheDecorator->clearCache();
     }
 
     public function updateUserToken(string $login): ?string
@@ -85,5 +94,22 @@ class StudentService implements UserServiceInterface
     public function remove(Student $student): void
     {
         $this->studentRepository->remove($student);
+        $this->cacheDecorator->clearCache();
+    }
+
+    public function assignToGroup(Student $student, array $requiredSkills): ?Group
+    {
+        $criteria = new GroupMatchingCriteria(requiredSkills: $requiredSkills, maxGroupSize: 20, maxIrrelevantSkillRatio: 0.3, maxUnwantedSkillsRatio: 0.5);
+
+        $groupMatcher = new GroupMatcherService($this->groupRepository);
+        $bestGroup = $groupMatcher->findBestMatchForStudent($student, $criteria);
+
+        if ($bestGroup) {
+            $bestGroup->addStudent($student);
+            $this->groupRepository->update($bestGroup);
+            $this->cacheDecorator->clearCache();
+        }
+
+        return $bestGroup;
     }
 }

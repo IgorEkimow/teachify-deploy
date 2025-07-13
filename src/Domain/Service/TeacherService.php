@@ -8,12 +8,14 @@ use App\Domain\Model\GetTeacherModel;
 use App\Domain\Model\UpdateLoginTeacherModel;
 use App\Infrastructure\Repository\TeacherRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Infrastructure\Repository\TeacherRepositoryCacheDecorator;
 
 class TeacherService implements UserServiceInterface
 {
     public function __construct(
         private readonly TeacherRepository $teacherRepository,
-        private readonly UserPasswordHasherInterface $userPasswordHasher
+        private readonly UserPasswordHasherInterface $userPasswordHasher,
+        private readonly TeacherRepositoryCacheDecorator $cacheDecorator
     ) {
     }
 
@@ -26,7 +28,9 @@ class TeacherService implements UserServiceInterface
         $teacher->setRoles($createTeacherModel->roles);
         $teacher->setCreatedAt();
         $teacher->setUpdatedAt();
+
         $this->teacherRepository->create($teacher);
+        $this->cacheDecorator->clearCache();
 
         return $teacher;
     }
@@ -62,6 +66,7 @@ class TeacherService implements UserServiceInterface
     public function updateLogin(Teacher $teacher, UpdateLoginTeacherModel $updateLoginTeacherModel): void
     {
         $this->teacherRepository->updateLogin($teacher, $updateLoginTeacherModel->login);
+        $this->cacheDecorator->clearCache();
     }
 
     public function updateUserToken(string $login): ?string
@@ -85,5 +90,6 @@ class TeacherService implements UserServiceInterface
     public function remove(Teacher $teacher): void
     {
         $this->teacherRepository->remove($teacher);
+        $this->cacheDecorator->clearCache();
     }
 }

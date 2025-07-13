@@ -16,6 +16,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Table(name: 'teacher')]
 #[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\UniqueConstraint(name: 'teacher__login__uniq', columns: ['login'], options: ['where' => '(deleted_at IS NULL)'])]
 #[ApiResource]
 #[ApiFilter(SearchFilter::class, properties: ['name' => 'partial', 'login' => 'partial'])]
@@ -144,6 +145,7 @@ class Teacher implements EntityInterface, SoftDeletableInterface, UserInterface,
         return $this->createdAt;
     }
 
+    #[ORM\PrePersist]
     public function setCreatedAt(): void {
         $this->createdAt = new DateTime();
     }
@@ -152,6 +154,8 @@ class Teacher implements EntityInterface, SoftDeletableInterface, UserInterface,
         return $this->updatedAt;
     }
 
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function setUpdatedAt(): void {
         $this->updatedAt = new DateTime();
     }

@@ -2,7 +2,6 @@
 
 namespace App\Controller\Web\Teacher\Get\GetAll\v1;
 
-use App\Domain\Entity\Teacher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +18,6 @@ readonly class Controller
     #[Route(path: 'api/v1/teachers', methods: ['GET'])]
     public function __invoke(Request $request): Response
     {
-        return new JsonResponse(array_map(static fn (Teacher $teacher): array => $teacher->toArray(), $this->manager->getAllTeachers()));
+        return new JsonResponse($this->manager->getAll());
     }
 }

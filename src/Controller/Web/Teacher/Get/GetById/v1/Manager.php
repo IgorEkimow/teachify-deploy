@@ -38,7 +38,8 @@ readonly class Manager
             $teacher->getUpdatedAt()->format('Y-m-d H:i:s'),
             $teacher->getSkills()->map(function($teacherSkill) {
                 return $teacherSkill->getSkill()->getName();
-            })->toArray()
+            })->toArray(),
+            $teacher->getRoles()
         );
     }
 }

@@ -35,6 +35,7 @@ RUN docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) \
     intl \
     gd \
     bcmath \
+    pcntl \
     pdo_pgsql \
     sockets \
     zip

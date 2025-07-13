@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: '`group`')]
 #[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Index(name: 'group_teacher_id_ind', columns: ['teacher_id'])]
 #[ApiResource]
 #[ApiFilter(SearchFilter::class, properties: ['name' => 'partial'])]
@@ -128,6 +129,7 @@ class Group implements EntityInterface, SoftDeletableInterface
         return $this->createdAt;
     }
 
+    #[ORM\PrePersist]
     public function setCreatedAt(): void {
         $this->createdAt = new DateTime();
     }
@@ -136,6 +138,8 @@ class Group implements EntityInterface, SoftDeletableInterface
         return $this->updatedAt;
     }
 
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function setUpdatedAt(): void {
         $this->updatedAt = new DateTime();
     }
@@ -156,7 +160,8 @@ class Group implements EntityInterface, SoftDeletableInterface
             'id' => $this->id,
             'name' => $this->name,
             'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s')
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+            'skills' => $this->skills->map(fn(Skill $skill) => $skill->getName())->toArray()
         ];
     }
 }

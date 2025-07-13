@@ -25,9 +25,6 @@ class StudentSkill implements EntityInterface
     #[ORM\JoinColumn(nullable: false)]
     private Skill $skill;
 
-    #[ORM\Column(type: 'integer', options: ['default' => 1])]
-    private int $priority = 1;
-
     public function getId(): int
     {
         return $this->id;
@@ -56,15 +53,5 @@ class StudentSkill implements EntityInterface
     public function setSkill(Skill $skill): void
     {
         $this->skill = $skill;
-    }
-
-    public function getPriority(): int
-    {
-        return $this->priority;
-    }
-
-    public function setPriority(int $priority): void
-    {
-        $this->priority = $priority;
     }
 }

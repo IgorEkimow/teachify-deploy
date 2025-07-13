@@ -14,6 +14,38 @@ class GroupRepository extends AbstractRepository
         return $this->store($group);
     }
 
+    public function find(int $id): ?Group
+    {
+        return $this->entityManager->getRepository(Group::class)
+            ->createQueryBuilder('g')
+            ->where('g.id = :id')
+            ->andWhere('g.deletedAt IS NULL')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findByName(string $name): array
+    {
+        return $this->entityManager->getRepository(Group::class)
+            ->createQueryBuilder('g')
+            ->where('g.name = :name')
+            ->andWhere('g.deletedAt IS NULL')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAll(): array
+    {
+        return $this->entityManager->getRepository(Group::class)
+            ->createQueryBuilder('g')
+            ->where('g.deletedAt IS NULL')
+            ->orderBy('g.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function update(Group $group, bool $flush = true): void
     {
         $this->entityManager->persist($group);
@@ -21,21 +53,6 @@ class GroupRepository extends AbstractRepository
         if ($flush) {
             $this->flush();
         }
-    }
-
-    public function findGroupByName(string $name): array
-    {
-        return $this->entityManager->getRepository(Group::class)->findBy(['name' => $name]);
-    }
-
-    public function find(int $groupId): ?Group
-    {
-        return $this->entityManager->getRepository(Group::class)->find($groupId);
-    }
-
-    public function findAll(): array
-    {
-        return $this->entityManager->getRepository(Group::class)->findAll();
     }
 
     public function updateName(Group $group, string $name): void

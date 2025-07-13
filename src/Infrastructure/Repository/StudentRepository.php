@@ -14,24 +14,47 @@ class StudentRepository extends AbstractRepository
         return $this->store($student);
     }
 
-    public function find(int $studentId): ?Student
+    public function find(int $id): ?Student
     {
-        return $this->entityManager->getRepository(Student::class)->find($studentId);
+        return $this->entityManager->getRepository(Student::class)
+            ->createQueryBuilder('s')
+            ->where('s.id = :id')
+            ->andWhere('s.deletedAt IS NULL')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function findByLogin(string $login): array
     {
-        return $this->entityManager->getRepository(Student::class)->findBy(['login' => $login]);
+        return $this->entityManager->getRepository(Student::class)
+            ->createQueryBuilder('s')
+            ->where('s.login = :login')
+            ->andWhere('s.deletedAt IS NULL')
+            ->setParameter('login', $login)
+            ->getQuery()
+            ->getResult();
     }
 
     public function findByToken(string $token): ?Student
     {
-        return $this->entityManager->getRepository(Student::class)->findOneBy(['token' => $token]);
+        return $this->entityManager->getRepository(Student::class)
+            ->createQueryBuilder('s')
+            ->where('s.token = :token')
+            ->andWhere('s.deletedAt IS NULL')
+            ->setParameter('token', $token)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function findAll(): array
     {
-        return $this->entityManager->getRepository(Student::class)->findAll();
+        return $this->entityManager->getRepository(Student::class)
+            ->createQueryBuilder('s')
+            ->where('s.deletedAt IS NULL')
+            ->orderBy('s.id', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     public function updateLogin(Student $student, string $login): void

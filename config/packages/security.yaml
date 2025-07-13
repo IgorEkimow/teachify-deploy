@@ -21,7 +21,7 @@ security:
             security: false
         token:
             pattern: ^/api/v1/get-token
-            security: false
+            security: true
         refreshToken:
             pattern: ^/api/v1/refresh-token
             stateless: true
@@ -29,7 +29,7 @@ security:
             custom_authenticator: App\Application\Security\ApiTokenAuthenticator
         register:
             pattern: ^/api/v1/register
-            security: false
+            security: true
         main:
             lazy: true
             stateless: true
