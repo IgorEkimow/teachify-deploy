@@ -2,6 +2,8 @@
 
 namespace App\Domain\Service;
 
+use App\Domain\Bus\AssignGroupBusInterface;
+use App\Domain\DTO\AssignGroupDTO;
 use App\Domain\Entity\Group;
 use App\Domain\Entity\Student;
 use App\Domain\Model\CreateStudentModel;
@@ -20,6 +22,7 @@ class StudentService implements UserServiceInterface
         private readonly UserPasswordHasherInterface $userPasswordHasher,
         private readonly StudentRepositoryCacheDecorator $cacheDecorator,
         private readonly GroupRepository $groupRepository,
+        private readonly AssignGroupBusInterface $assignGroupBus,
     ) {
     }
 
@@ -60,6 +63,11 @@ class StudentService implements UserServiceInterface
     public function findUserByToken(string $token): ?Student
     {
         return $this->studentRepository->findByToken($token);
+    }
+
+    public function find($id): ?Student
+    {
+        return $this->studentRepository->find($id);
     }
 
     public function findAll(): array
@@ -111,5 +119,10 @@ class StudentService implements UserServiceInterface
         }
 
         return $bestGroup;
+    }
+
+    public function assignGroupAsync(AssignGroupDTO $assignGroupDTO)
+    {
+        return $this->assignGroupBus->sendAssignGroupMessage($assignGroupDTO);
     }
 }
