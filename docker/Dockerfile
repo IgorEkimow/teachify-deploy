@@ -43,6 +43,13 @@ RUN pecl channel-update pecl.php.net \
     && pecl install -o -f \
         redis \
         event \
+        xdebug  \
     && rm -rf /tmp/pear \
+    && docker-php-ext-enable xdebug \
     && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini \
-    && echo "extension=event.so" > /usr/local/etc/php/conf.d/event.ini
+    && echo "extension=event.so" > /usr/local/etc/php/conf.d/event.ini \
+    && echo "xdebug.mode=debug,coverage" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.start_with_request=no" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/xdebug.ini
