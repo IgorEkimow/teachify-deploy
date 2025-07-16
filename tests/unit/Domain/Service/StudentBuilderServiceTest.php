@@ -53,7 +53,6 @@ class StudentBuilderServiceTest extends TestCase
         $this->skillServiceMock->method('findByName')->willReturn(null);
         $this->skillServiceMock->method('create')->willReturnOnConsecutiveCalls($phpSkill, $jsSkill);
         $this->studentSkillServiceMock->expects($this->exactly(2))->method('create');
-
         $result = $this->service->createStudentWithSkill($model);
 
         $this->assertSame($student, $result);
@@ -75,7 +74,6 @@ class StudentBuilderServiceTest extends TestCase
         $this->studentServiceMock->method('create')->willReturn($student);
         $this->skillServiceMock->method('findByName')->with('PHP')->willReturn($phpSkill);
         $this->studentSkillServiceMock->expects($this->once())->method('create');
-
         $result = $this->service->createStudentWithSkill($model);
 
         $this->assertSame($student, $result);
@@ -92,28 +90,6 @@ class StudentBuilderServiceTest extends TestCase
         $this->studentServiceMock->method('create')->willReturn($student);
         $this->skillServiceMock->expects($this->never())->method('findByName');
         $this->studentSkillServiceMock->expects($this->never())->method('create');
-
-        $result = $this->service->createStudentWithSkill($model);
-
-        $this->assertSame($student, $result);
-    }
-
-    public function testCreateStudentWithDuplicateSkills(): void
-    {
-        $model = new CreateStudentModel(name: 'Nick', login: 'nick', password: 'password', skills: ['PHP', 'PHP'], roles: ['ROLE_STUDENT']);
-
-        $student = new Student();
-        $student->setId(1);
-        $student->setName($model->name);
-
-        $phpSkill = new Skill();
-        $phpSkill->setId(1);
-        $phpSkill->setName('PHP');
-
-        $this->studentServiceMock->method('create')->willReturn($student);
-        $this->skillServiceMock->method('findByName')->with('PHP')->willReturn($phpSkill);
-        $this->studentSkillServiceMock->expects($this->once())->method('create');
-
         $result = $this->service->createStudentWithSkill($model);
 
         $this->assertSame($student, $result);

@@ -30,7 +30,7 @@ class GroupMatcherService
         return $this->groupRepository->find(key($eligibleGroups));
     }
 
-    private function findEligibleGroups(Student $student, GroupMatchingCriteria $criteria): array
+    public function findEligibleGroups(Student $student, GroupMatchingCriteria $criteria): array
     {
         $studentSkills = $this->getStudentSkillNames($student);
         $eligibleGroups = [];
