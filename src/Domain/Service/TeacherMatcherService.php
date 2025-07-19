@@ -30,7 +30,7 @@ class TeacherMatcherService
         return $this->teacherRepository->find(key($eligibleTeachers));
     }
 
-    private function findEligibleTeachers(Group $group, TeacherMatchingCriteria $criteria): array
+    public function findEligibleTeachers(Group $group, TeacherMatchingCriteria $criteria): array
     {
         $groupSkills = $this->getGroupSkillNames($group);
         $eligibleTeachers = [];
