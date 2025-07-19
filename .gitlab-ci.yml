@@ -1,0 +1,51 @@
+stages:
+  - test
+  - deploy
+  - rollback
+
+before_script:
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 -d)
+  - mkdir -p ~/.ssh
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  - export DIR=$(date +%Y%m%d_%H%M%S)
+
+unit_tests:
+  stage: test
+  script:
+    - ssh $SSH_USER@$SERVER1 "cd /var/www/html &&
+      git clone https://github.com/IgorEkimow/teachify-deploy.git $DIR &&
+      sudo chown $SSH_USER:$SSH_USER $DIR -R &&
+      cd $DIR &&
+      composer install --no-interaction --no-scripts &&
+      sudo chown www-data:www-data . -R &&
+      php vendor/bin/phpunit tests/unit"
+
+deploy_server1:
+  stage: deploy
+  needs: ["unit_tests"]
+  environment:
+    name: server1
+    url: $SERVER1
+  script:
+    - ssh $SSH_USER@$SERVER1 "cd /var/www/html &&
+      git clone https://github.com/IgorEkimow/teachify-deploy.git $DIR &&
+      sudo chown www-data:www-data $DIR -R &&
+      cd $DIR &&
+      sh ./deploy.sh $SERVER1 $DATABASE_HOST $DATABASE_USER $DATABASE_PASSWORD $DATABASE_NAME $RABBITMQ_HOST $RABBITMQ_USER $RABBITMQ_PASSWORD &&
+      cd .. &&
+      rm -rf /var/www/html/$DIR/var/log &&
+      ln -s /var/www/html/shared/log /var/www/html/$DIR/var/log &&
+      ( [ ! -d /var/www/html/current ] || mv -Tf /var/www/html/current /var/www/html/previous ) &&
+      ln -s /var/www/html/$DIR /var/www/html/current"
+  only:
+    - master
+
+rollback:
+  stage: rollback
+  script:
+    - ssh $SSH_USER@$SERVER1 "unlink /var/www/html/current &&
+      mv -Tf /var/www/html/previous /var/www/html/current &&
+      cd /var/www/html/current &&
+      sh ./rollback.sh $SERVER1"
+  when: manual
