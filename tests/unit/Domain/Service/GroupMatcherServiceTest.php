@@ -77,6 +77,44 @@ class GroupMatcherServiceTest extends TestCase
         $this->assertNull($result);
     }
 
+    public function testSuccessfulMatchWhenGroupHasCommonSkillsAndSpaceAvailable()
+    {
+        $student = $this->createStudentWithSkills(['PHP', 'JavaScript']);
+        $group = $this->createGroupWithSkills(['PHP', 'TypeScript'], 5);
+        $group->setId(1);
+
+        $this->groupRepository->method('findAll')->willReturn([$group]);
+        $this->groupRepository->method('find')->willReturn($group);
+
+        $criteria = new GroupMatchingCriteria(requiredSkills: ['PHP'], maxGroupSize: 20, maxUnwantedSkillsRatio: 0.5);
+        $result = $this->matcher->findBestMatchForStudent($student, $criteria);
+
+        $this->assertNotNull($result);
+        $this->assertSame(1, $result->getId());
+    }
+
+    public function testSelectsBestMatchingGroupFromMultipleOptions()
+    {
+        $student = $this->createStudentWithSkills(['PHP', 'JavaScript', 'MySQL']);
+        $bestGroup = $this->createGroupWithSkills(['PHP', 'JavaScript', 'MySQL'], 2);
+        $bestGroup->setId(1);
+
+        $goodGroup = $this->createGroupWithSkills(['PHP', 'JavaScript', 'TypeScript'], 5);
+        $goodGroup->setId(2);
+
+        $minGroup = $this->createGroupWithSkills(['PHP', 'C#', 'Java'], 10);
+        $minGroup->setId(3);
+
+        $this->groupRepository->method('findAll')->willReturn([$minGroup, $goodGroup, $bestGroup]);
+        $this->groupRepository->method('find')->willReturnCallback(fn($id) => match($id) {1 => $bestGroup,2 => $goodGroup,3 => $minGroup});
+
+        $criteria = new GroupMatchingCriteria(requiredSkills: ['PHP'], maxGroupSize: 20, maxUnwantedSkillsRatio: 0.5);
+        $result = $this->matcher->findBestMatchForStudent($student, $criteria);
+
+        $this->assertNotNull($result);
+        $this->assertSame(1, $result->getId());
+    }
+
     private function createStudentWithSkills(array $skillNames): Student
     {
         $student = new Student();

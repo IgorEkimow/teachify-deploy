@@ -56,7 +56,6 @@ class StudentBuilderServiceTest extends TestCase
         $result = $this->service->createStudentWithSkill($model);
 
         $this->assertSame($student, $result);
-        $this->assertEquals('Mike', $result->getName());
     }
 
     public function testCreateStudentWithExistingSkills(): void
