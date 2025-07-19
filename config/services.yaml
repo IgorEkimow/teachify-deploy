@@ -69,3 +69,8 @@ services:
     App\Infrastructure\Repository\TeacherRepositoryCacheDecorator:
         arguments:
             $cache: '@redis_tag_aware_adapter'
+
+    App\Infrastructure\Bus\RabbitMqBus:
+        calls:
+            - [ 'registerProducer', [ !php/enum App\Infrastructure\Bus\AmqpQueueEnum::AssignTeacher, '@old_sound_rabbit_mq.assign_teacher_producer' ] ]
+            - [ 'registerProducer', [ !php/enum App\Infrastructure\Bus\AmqpQueueEnum::AssignGroup, '@old_sound_rabbit_mq.assign_group_producer' ] ]

@@ -4,6 +4,7 @@ namespace App\Domain\Service;
 
 use App\Domain\Entity\Student;
 use App\Domain\Model\CreateStudentModel;
+use App\Domain\DTO\AssignGroupDTO;
 
 class StudentBuilderService
 {
@@ -24,7 +25,7 @@ class StudentBuilderService
             $student->addSkill($studentSkill);
         }
 
-        $this->studentService->assignToGroup($student, $createStudentModel->skills);
+        $this->studentService->assignGroupAsync(new AssignGroupDTO($student->getId(), $createStudentModel->skills));
 
         return $student;
     }

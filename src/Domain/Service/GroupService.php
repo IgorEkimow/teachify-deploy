@@ -2,6 +2,8 @@
 
 namespace App\Domain\Service;
 
+use App\Domain\Bus\AssignTeacherBusInterface;
+use App\Domain\DTO\AssignTeacherDTO;
 use App\Domain\Entity\Group;
 use App\Domain\Model\CreateGroupModel;
 use App\Domain\Model\GetGroupModel;
@@ -17,7 +19,8 @@ readonly class GroupService
         private SkillService $skillService,
         private GroupRepository $groupRepository,
         private TeacherRepository $teacherRepository,
-        private GroupRepositoryCacheDecorator $cacheDecorator
+        private GroupRepositoryCacheDecorator $cacheDecorator,
+        private AssignTeacherBusInterface $assignTeacherBus,
     ) {
     }
 
@@ -47,7 +50,7 @@ readonly class GroupService
         }
 
         $this->groupRepository->create($group);
-        $this->assignTeacher($group);
+        $this->assignTeacherAsync(new AssignTeacherDTO($group->getId()));
         $this->cacheDecorator->clearCache();
 
         return $group;
@@ -62,6 +65,11 @@ readonly class GroupService
     {
         $group = $this->groupRepository->findByName($createGroupModel->name);
         return $group[0] ?? null;
+    }
+
+    public function find($id): ?Group
+    {
+        return $this->groupRepository->find($id);
     }
 
     public function findAll(): array
@@ -83,7 +91,7 @@ readonly class GroupService
 
     public function assignTeacher(Group $group): void
     {
-        $criteria = new TeacherMatchingCriteria(maxGroupsPerTeacher: 5, minSkillCoverage: 0.7);
+        $criteria = new TeacherMatchingCriteria(maxGroupsPerTeacher: 5, minSkillCoverage: 0.5);
 
         $teacherMatcher = new TeacherMatcherService($this->teacherRepository);
         $bestTeacher = $teacherMatcher->findBestMatchForGroup($group, $criteria);
@@ -93,5 +101,10 @@ readonly class GroupService
             $this->groupRepository->update($group);
             $this->cacheDecorator->clearCache();
         }
+    }
+
+    public function assignTeacherAsync(AssignTeacherDTO $assignTeacherDTO): int
+    {
+        return $this->assignTeacherBus->sendAssignTeacherMessage($assignTeacherDTO) ? $assignTeacherDTO->id : 0;
     }
 }

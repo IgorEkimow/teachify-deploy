@@ -40,8 +40,7 @@ readonly class Manager
             $student->getSkills()->map(function($studentSkill) {
                 return $studentSkill->getSkill()->getName();
             })->toArray(),
-            $student->getRoles(),
-            $student->getGroup()?->getName() ?? ''
+            $student->getRoles()
         );
     }
 }
