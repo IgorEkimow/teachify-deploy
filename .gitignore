@@ -7,6 +7,6 @@
 /vendor/
 .idea/*
 .DS_Store
-/config/jwt/*.pem
+# /config/jwt/*.pem
 /phpunit.xml
 /.phpunit.cache/
